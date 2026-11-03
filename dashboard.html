@@ -724,5 +724,213 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 });
-</script></body>
+</script><style>
+.hut8-referral-card{
+  background:white;
+  border:1px solid #DCEFFC;
+  border-radius:18px;
+  padding:22px;
+  margin:22px 0;
+  box-shadow:0 3px 12px rgba(0,130,190,.08);
+}
+.hut8-referral-card h3{
+  color:#168FCB;
+  margin-bottom:10px;
+  font-size:20px;
+}
+.hut8-referral-card p{
+  color:#607D96;
+  font-size:14px;
+  margin-bottom:15px;
+}
+.hut8-referral-code{
+  background:#EAF7FF;
+  color:#168FCB;
+  padding:15px;
+  border-radius:12px;
+  font-size:23px;
+  font-weight:bold;
+  text-align:center;
+  letter-spacing:3px;
+  margin-bottom:12px;
+}
+.hut8-referral-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:15px 0;
+}
+.hut8-referral-stat{
+  background:#F3FAFF;
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+}
+.hut8-referral-stat strong{
+  display:block;
+  color:#168FCB;
+  font-size:22px;
+  margin-bottom:5px;
+}
+.hut8-referral-stat span{
+  color:#607D96;
+  font-size:12px;
+}
+.hut8-referral-card button{
+  width:100%;
+  padding:14px;
+  background:#279FD5;
+  border:0;
+  color:white;
+  border-radius:30px;
+  font-weight:bold;
+  font-size:15px;
+  margin-top:8px;
+  cursor:pointer;
+}
+</style>
+
+<script>
+async function loadHut8Referral(){
+
+try{
+
+const {data:sessionData} =
+await supabaseClient.auth.getSession();
+
+const session = sessionData.session;
+
+if(!session) return;
+
+const {data:profile,error:profileError} =
+await supabaseClient
+.from("hut8_profiles")
+.select("referral_code")
+.eq("id",session.user.id)
+.single();
+
+if(profileError) throw profileError;
+
+if(!profile.referral_code){
+throw new Error("Your referral code is not available yet.");
+}
+
+const code = profile.referral_code;
+
+// Referral link
+const referralURL = new URL(
+"index.html",
+window.location.href
+);
+
+referralURL.searchParams.set("ref",code);
+
+const link = referralURL.href;
+
+// Get referral statistics
+const {data:referrals,error:referralError} =
+await supabaseClient
+.from("hut8_referrals")
+.select("id,status")
+.eq("referrer_id",session.user.id);
+
+if(referralError) throw referralError;
+
+const total = referrals.length;
+
+const verified = referrals.filter(
+item => item.status === "verified" ||
+item.status === "rewarded"
+).length;
+
+// Create referral section
+const card = document.createElement("section");
+
+card.className = "hut8-referral-card";
+
+card.innerHTML = `
+<h3>My Referrals</h3>
+<p>Share your personal referral link with friends.</p>
+
+<div class="hut8-referral-code">
+${code}
+</div>
+
+<div class="hut8-referral-stats">
+<div class="hut8-referral-stat">
+<strong>${total}</strong>
+<span>Total Referrals</span>
+</div>
+
+<div class="hut8-referral-stat">
+<strong>${verified}</strong>
+<span>Verified Referrals</span>
+</div>
+</div>
+
+<button type="button" id="hut8CopyLink">
+Copy Referral Link
+</button>
+
+<button type="button" id="hut8ShareLink">
+Share Referral Link
+</button>
+`;
+
+const account = document.querySelector(".account");
+
+if(account){
+account.insertAdjacentElement("afterend",card);
+}
+
+// Copy link
+document.getElementById("hut8CopyLink")
+.addEventListener("click",async function(){
+
+try{
+await navigator.clipboard.writeText(link);
+alert("Referral link copied successfully!");
+}catch(error){
+prompt("Copy your referral link:",link);
+}
+
+});
+
+// Share link
+document.getElementById("hut8ShareLink")
+.addEventListener("click",async function(){
+
+if(navigator.share){
+
+try{
+await navigator.share({
+title:"Join HUT8 ADVANCED",
+text:"Join me on HUT8 ADVANCED using my referral link:",
+url:link
+});
+}catch(error){}
+
+}else{
+
+try{
+await navigator.clipboard.writeText(link);
+alert("Referral link copied. You can now share it!");
+}catch(error){
+prompt("Copy your referral link:",link);
+}
+
+}
+
+});
+
+}catch(error){
+
+console.error("Referral loading error:",error);
+
+}
+
+}
+
+loadHut8Referral();
+  </script></body>
   </html>
