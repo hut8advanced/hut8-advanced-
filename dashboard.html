@@ -932,5 +932,15 @@ console.error("Referral loading error:",error);
 }
 
 loadHut8Referral();
+  </script><script>
+document.querySelectorAll("button").forEach(function(button){
+
+  if(button.textContent.trim().toLowerCase().includes("withdraw")){
+    button.onclick = function(){
+      window.location.href = "withdraw.html";
+    };
+  }
+
+});
   </script></body>
   </html>
