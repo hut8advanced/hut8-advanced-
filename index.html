@@ -269,7 +269,62 @@ window.location.href="dashboard.html";
 }
 })();
 </script>
-</body>
+<script>
+(function(){
+
+// Read referral code from registration link
+const params = new URLSearchParams(window.location.search);
+const referralCode = params.get("ref");
+
+if(!referralCode) return;
+
+// Keep code available during registration
+sessionStorage.setItem("hut8_pending_referral",referralCode);
+
+async function applyHut8Referral(){
+
+const code = sessionStorage.getItem("hut8_pending_referral");
+
+if(!code) return;
+
+const {data,error} = await supabaseClient.rpc(
+"hut8_apply_referral",
+{
+p_referral_code:code
+}
+);
+
+if(error){
+console.error("Referral:",error.message);
+return;
+}
+
+sessionStorage.removeItem("hut8_pending_referral");
+
+console.log("Referral recorded:",data);
+
+}
+
+// Wait until a new member logs in
+supabaseClient.auth.onAuthStateChange(
+(event,session)=>{
+
+if(event === "SIGNED_IN" && session){
+setTimeout(applyHut8Referral,500);
+}
+
+}
+);
+
+// Also handle an existing active session
+supabaseClient.auth.getSession().then(({data})=>{
+if(data.session){
+applyHut8Referral();
+}
+});
+
+})();
+</script></body>
   </html>
 
 
