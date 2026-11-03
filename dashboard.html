@@ -972,5 +972,177 @@ document.querySelectorAll("button").forEach(function(button){
 </script>
 </body>
 </html>
+
+<script>
+(function () {
+  const panel = document.createElement("div");
+  panel.id = "hut8RecordsPanel";
+  panel.style.cssText = `
+    display:none;position:fixed;inset:0;z-index:99999;
+    background:#f3f8fc;overflow-y:auto;padding:20px;
+    font-family:Arial,sans-serif;color:#16344b;
+  `;
+
+  panel.innerHTML = `
+    <div style="max-width:650px;margin:auto">
+      <button id="hut8CloseRecords" style="
+        background:#087fc1;color:white;border:0;
+        padding:12px 20px;border-radius:9px;font-weight:bold">
+        ← Back to Dashboard
+      </button>
+      <h2 id="hut8RecordsTitle" style="margin-top:24px">My Records</h2>
+      <div id="hut8RecordsContent">Loading...</div>
+    </div>
+  `;
+  document.body.appendChild(panel);
+
+  const title = panel.querySelector("#hut8RecordsTitle");
+  const content = panel.querySelector("#hut8RecordsContent");
+
+  panel.querySelector("#hut8CloseRecords").onclick = function () {
+    panel.style.display = "none";
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function (c) {
+      return {
+        "&":"&amp;","<":"&lt;",">":"&gt;",
+        '"':"&quot;","'":"&#39;"
+      }[c];
+    });
+  }
+
+  function money(value) {
+    return "UGX " + Number(value || 0).toLocaleString("en-UG");
+  }
+
+  function date(value) {
+    return value ? escapeHTML(new Date(value).toLocaleString()) : "—";
+  }
+
+  async function openRecords(section) {
+    panel.style.display = "block";
+    title.textContent = section;
+    content.innerHTML = "Loading your records...";
+
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabaseClient.auth.getSession();
+
+      if (sessionError) throw sessionError;
+
+      const user = sessionData.session?.user;
+      if (!user) throw new Error("Please log in again.");
+
+      let table, columns, orderColumn;
+
+      if (section === "My Earnings") {
+        table = "hut8_earnings";
+        columns = "amount,earning_date,description,status,created_at";
+        orderColumn = "earning_date";
+      } else if (section === "Transactions") {
+        table = "hut8_transactions";
+        columns = "transaction_type,direction,amount,reference,description,status,created_at";
+        orderColumn = "created_at";
+      } else {
+        table = "hut8_referrals";
+        columns = "referral_code,status,reward_amount,created_at,verified_at";
+        orderColumn = "created_at";
+      }
+
+      const { data, error } = await supabaseClient
+        .from(table)
+        .select(columns)
+        .eq("user_id", user.id)
+        .order(orderColumn, { ascending: false })
+        .limit(100);
+
+      // Referrals use referrer_id rather than user_id.
+      let rows = data || [];
+
+      if (section === "Referrals") {
+        const result = await supabaseClient
+          .from("hut8_referrals")
+          .select(columns)
+          .eq("referrer_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        if (result.error) throw result.error;
+        rows = result.data || [];
+      } else if (error) {
+        throw error;
+      }
+
+      if (!rows.length) {
+        content.innerHTML =
+          '<p style="background:white;padding:18px;border-radius:12px">No records to display yet.</p>';
+        return;
+      }
+
+      content.innerHTML = rows.map(function (r) {
+        let details = "";
+
+        if (section === "My Earnings") {
+          details = `
+            <b>${money(r.amount)}</b>
+            <p>Date: ${date(r.earning_date)}</p>
+            <p>Status: ${escapeHTML(r.status)}</p>
+            <p>${escapeHTML(r.description || "")}</p>`;
+        } else if (section === "Transactions") {
+          details = `
+            <b>${money(r.amount)}</b>
+            <p>Type: ${escapeHTML(r.transaction_type)}</p>
+            <p>Direction: ${escapeHTML(r.direction)}</p>
+            <p>Status: ${escapeHTML(r.status)}</p>
+            <p>Reference: ${escapeHTML(r.reference || "—")}</p>
+            <p>Date: ${date(r.created_at)}</p>`;
+        } else {
+          details = `
+            <b>Referral</b>
+            <p>Code: ${escapeHTML(r.referral_code)}</p>
+            <p>Status: ${escapeHTML(r.status)}</p>
+            <p>Recorded reward: ${money(r.reward_amount)}</p>
+            <p>Date: ${date(r.created_at)}</p>`;
+        }
+
+        return `
+          <div style="background:white;padding:17px;border-radius:12px;
+            margin:12px 0;box-shadow:0 3px 12px #173b5610">
+            ${details}
+          </div>`;
+      }).join("");
+
+    } catch (err) {
+      content.innerHTML =
+        '<p style="color:#b42318;background:white;padding:15px;border-radius:10px">' +
+        escapeHTML(err.message || "Unable to load records.") +
+        '</p>';
+    }
+  }
+
+  document.addEventListener("click", function (event) {
+    const item = event.target.closest("button,a");
+    if (!item) return;
+
+    const label = (item.innerText || item.textContent || "")
+      .trim().toLowerCase();
+
+    let section = "";
+
+    if (label.includes("earning")) section = "My Earnings";
+    else if (label.includes("transaction")) section = "Transactions";
+    else if (label.includes("referral")) section = "Referrals";
+
+    if (section) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      openRecords(section);
+    }
+  }, true);
+})();
+</script>
+</body>
+</html>
 </body>
   </html>
