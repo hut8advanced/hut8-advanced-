@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUT8 ADVANCED</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:Arial,sans-serif;
+background:#55C9F0;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:420px;
+background:white;
+padding:30px 24px;
+border-radius:22px;
+box-shadow:0 10px 35px rgba(0,0,0,.10);
+}
+
+.logo{
+text-align:center;
+font-size:27px;
+font-weight:900;
+color:#38B5E5;
+margin-bottom:12px;
+}
+
+.subtitle{
+text-align:center;
+color:#777;
+font-size:14px;
+margin-bottom:25px;
+}
+
+.tabs{
+display:flex;
+background:#EAF9FF;
+padding:5px;
+border-radius:12px;
+margin-bottom:25px;
+}
+
+.tabs button{
+width:50%;
+border:0;
+padding:13px;
+border-radius:9px;
+background:transparent;
+color:#299DCB;
+font-weight:bold;
+cursor:pointer;
+}
+
+.tabs button.active{
+background:#55C9F0;
+color:white;
+}
+
+h2{
+color:#269FCB;
+margin-bottom:8px;
+font-size:23px;
+}
+
+.description{
+color:#777;
+font-size:13px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-size:13px;
+font-weight:bold;
+color:#444;
+margin:13px 0 7px;
+}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid #D8EAF1;
+border-radius:10px;
+outline:none;
+font-size:14px;
+}
+
+input:focus{
+border-color:#55C9F0;
+}
+
+.main-btn{
+width:100%;
+padding:15px;
+border:0;
+border-radius:10px;
+background:#55C9F0;
+color:white;
+font-size:15px;
+font-weight:bold;
+margin-top:22px;
+cursor:pointer;
+}
+
+.main-btn:disabled{
+opacity:.6;
+}
+
+.forgot{
+text-align:right;
+margin-top:13px;
+}
+
+.forgot button{
+border:0;
+background:none;
+color:#269FCB;
+cursor:pointer;
+font-size:13px;
+}
+
+.message{
+margin-top:15px;
+font-size:13px;
+text-align:center;
+line-height:1.5;
+}
+
+.footer{
+text-align:center;
+margin-top:23px;
+color:#888;
+font-size:12px;
+}
+
+.hidden{display:none}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">HUT8 ADVANCED</div>
+<div class="subtitle">YOUR FINANCIAL SPACE</div>
+
+<div class="tabs">
+<button id="signupTab" class="active" onclick="showSignup()">SIGN UP</button>
+<button id="loginTab" onclick="showLogin()">LOGIN</button>
+</div>
+
+<!-- SIGN UP -->
+
+<div id="signupForm">
+
+<h2>Create Account</h2>
+<div class="description">Join HUT8 ADVANCED today.</div>
+
+<form onsubmit="signup(event)">
+
+<label>Full Name</label>
+<input id="fullName" type="text" placeholder="Enter your full name" required>
+
+<label>Username</label>
+<input id="username" type="text" placeholder="Choose a username" required>
+
+<label>Mobile Number</label>
+<input id="mobile" type="tel" placeholder="Enter mobile number" required>
+
+<label>Email Address</label>
+<input id="signupEmail" type="email" placeholder="Enter email address" required>
+
+<label>Password</label>
+<input id="signupPassword" type="password" placeholder="Create password" minlength="6" required>
+
+<button class="main-btn" id="signupButton" type="submit">CREATE ACCOUNT</button>
+
+</form>
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginForm" class="hidden">
+
+<h2>Welcome Back</h2>
+<div class="description">Login to your HUT8 ADVANCED account.</div>
+
+<form onsubmit="login(event)">
+
+<label>Email Address</label>
+<input id="loginEmail" type="email" placeholder="Enter email address" required>
+
+<label>Password</label>
+<input id="loginPassword" type="password" placeholder="Enter password" required>
+
+<div class="forgot">
+<button type="button" onclick="forgotPassword()">Forgot password?</button>
+</div>
+
+<button class="main-btn" id="loginButton" type="submit">LOGIN</button>
+
+</form>
+</div>
+
+<div id="message" class="message"></div>
+
+<div class="footer">
+HUT8 ADVANCED © 2026<br>
+Secure Account Access
+</div>
+
+</div>
+
+<script>
+
+// SUPABASE CONNECTION
+
+const SUPABASE_URL = "https://chjtxxwxhvjwpspmikme.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+
+const supabaseClient = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+// SWITCH FORMS
+
+function showSignup(){
+document.getElementById("signupForm").classList.remove("hidden");
+document.getElementById("loginForm").classList.add("hidden");
+document.getElementById("signupTab").classList.add("active");
+document.getElementById("loginTab").classList.remove("active");
+showMessage("");
+}
+
+function showLogin(){
+document.getElementById("loginForm").classList.remove("hidden");
+document.getElementById("signupForm").classList.add("hidden");
+document.getElementById("loginTab").classList.add("active");
+document.getElementById("signupTab").classList.remove("active");
+showMessage("");
+}
+
+function showMessage(message){
+document.getElementById("message").textContent=message;
+}
+
+// REGISTER
+
+async function signup(event){
+
+event.preventDefault();
+
+const button=document.getElementById("signupButton");
+button.disabled=true;
+button.textContent="CREATING ACCOUNT...";
+
+const fullName=document.getElementById("fullName").value.trim();
+const username=document.getElementById("username").value.trim();
+const mobile=document.getElementById("mobile").value.trim();
+const email=document.getElementById("signupEmail").value.trim();
+const password=document.getElementById("signupPassword").value;
+
+try{
+
+const {data,error}=await supabaseClient.auth.signUp({
+
+email:email,
+password:password,
+
+options:{
+data:{
+full_name:fullName,
+username:username,
+mobile:mobile
+},
+emailRedirectTo:window.location.origin+"/"
+}
+
+});
+
+if(error) throw error;
+
+if(data.session){
+showMessage("Account created successfully! Redirecting...");
+setTimeout(()=>window.location.href="dashboard.html",1200);
+}else{
+showMessage("Registration received! Check your email for a verification link if email confirmation is enabled. Then log in.");
+}
+
+}catch(error){
+showMessage(error.message);
+}
+
+button.disabled=false;
+button.textContent="CREATE ACCOUNT";
+
+}
+
+// LOGIN
+
+async function login(event){
+
+event.preventDefault();
+
+const button=document.getElementById("loginButton");
+button.disabled=true;
+button.textContent="LOGGING IN...";
+
+const email=document.getElementById("loginEmail").value.trim();
+const password=document.getElementById("loginPassword").value;
+
+try{
+
+const {data,error}=await supabaseClient.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+if(error) throw error;
+
+showMessage("Login successful! Opening your dashboard...");
+
+setTimeout(()=>{
+window.location.href="dashboard.html";
+},1000);
+
+}catch(error){
+showMessage(error.message);
+}
+
+button.disabled=false;
+button.textContent="LOGIN";
+
+}
+
+// PASSWORD RECOVERY
+
+async function forgotPassword(){
+
+const email=document.getElementById("loginEmail").value.trim();
+
+if(!email){
+showMessage("Enter your email address first.");
+return;
+}
+
+try{
+
+const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{
+redirectTo:window.location.origin+"/"
+});
+
+if(error) throw error;
+
+showMessage("Password recovery instructions have been sent if the account exists.");
+
+}catch(error){
+showMessage(error.message);
+}
+
+}
+
+// CHECK EXISTING SESSION
+
+(async()=>{
+const {data}=await supabaseClient.auth.getSession();
+
+if(data.session){
+window.location.href="dashboard.html";
+}
+})();
+
+</script>
+
+</body>
+  </html>
