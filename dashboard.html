@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUT8 ADVANCED Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:Arial,sans-serif;
+background:#F3FAFF;
+color:#12345A;
+}
+
+.layout{
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:225px;
+background:#279FD5;
+color:white;
+padding:25px 15px;
+display:flex;
+flex-direction:column;
+position:fixed;
+top:0;
+bottom:0;
+left:0;
+}
+
+.brand{
+text-align:center;
+font-size:25px;
+font-weight:900;
+margin:20px 0 45px;
+}
+
+.brand span{
+display:block;
+font-size:13px;
+margin-top:5px;
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.nav button{
+background:transparent;
+border:0;
+color:white;
+padding:15px 12px;
+text-align:left;
+border-radius:12px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.nav button:hover,
+.nav button.active{
+background:#078DCB;
+}
+
+.sidebar-logout{
+margin-top:auto;
+border:2px solid white;
+border-radius:30px;
+background:transparent;
+color:white;
+padding:14px;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+}
+
+/* MAIN */
+
+.main{
+margin-left:225px;
+width:calc(100% - 225px);
+padding:25px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.welcome h1{
+font-size:29px;
+color:#12345A;
+}
+
+.welcome p{
+color:#299FCB;
+margin-top:7px;
+}
+
+.profile-icon{
+background:#55C9F0;
+color:white;
+width:48px;
+height:48px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+}
+
+/* SUMMARY */
+
+.summary{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-bottom:23px;
+}
+
+.summary-card{
+background:white;
+padding:20px;
+border-radius:17px;
+box-shadow:0 3px 12px rgba(0,130,190,.10);
+border:1px solid #DCEFFC;
+}
+
+.summary-card .icon{
+font-size:28px;
+margin-bottom:12px;
+}
+
+.summary-card p{
+font-size:13px;
+color:#607D96;
+margin-bottom:8px;
+}
+
+.summary-card h2{
+font-size:23px;
+color:#249FD5;
+}
+
+/* BANNER */
+
+.banner{
+background:linear-gradient(110deg,#0876C9,#55C9F0);
+padding:30px;
+border-radius:22px;
+color:white;
+margin-bottom:23px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+min-height:155px;
+}
+
+.banner h2{
+font-size:27px;
+margin-bottom:10px;
+}
+
+.banner p{
+font-size:14px;
+}
+
+.banner button{
+background:white;
+color:#087DC1;
+border:0;
+padding:12px 22px;
+border-radius:30px;
+font-weight:bold;
+margin-top:17px;
+cursor:pointer;
+}
+
+/* ACCOUNT */
+
+.section-title{
+font-size:20px;
+margin:20px 0 15px;
+color:#168FCB;
+}
+
+.account{
+background:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 3px 12px rgba(0,130,190,.08);
+border:1px solid #DCEFFC;
+display:grid;
+grid-template-columns:1fr 1fr 150px;
+gap:20px;
+align-items:center;
+}
+
+.detail{
+margin-bottom:18px;
+}
+
+.detail:last-child{
+margin-bottom:0;
+}
+
+.detail small{
+display:block;
+color:#7890A5;
+margin-bottom:6px;
+}
+
+.detail strong{
+font-size:14px;
+word-break:break-word;
+}
+
+.status{
+background:#E6F7FF;
+padding:20px 10px;
+text-align:center;
+border-radius:15px;
+color:#168FCB;
+font-weight:bold;
+}
+
+/* QUICK LINKS */
+
+.quick-links{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:13px;
+}
+
+.quick-card{
+background:white;
+border:1px solid #D7ECFA;
+border-radius:16px;
+padding:22px 12px;
+display:flex;
+align-items:center;
+gap:12px;
+color:#168FCB;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 3px 10px rgba(0,130,190,.07);
+text-align:left;
+}
+
+.quick-card span{
+font-size:27px;
+}
+
+.quick-card:hover{
+background:#EAF8FF;
+}
+
+/* ACTIVITY */
+
+.activity{
+background:white;
+border-radius:17px;
+padding:20px;
+margin-top:23px;
+border:1px solid #DCEFFC;
+overflow-x:auto;
+}
+
+.activity-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.activity-header h3{
+color:#168FCB;
+font-size:19px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:450px;
+}
+
+th,td{
+padding:13px 10px;
+text-align:left;
+border-bottom:1px solid #E5F2F9;
+font-size:13px;
+}
+
+th{
+background:#EAF7FF;
+}
+
+.empty{
+text-align:center;
+padding:25px;
+color:#7890A5;
+}
+
+/* MOBILE */
+
+.mobile-nav{
+display:none;
+}
+
+@media(max-width:850px){
+
+.sidebar{display:none}
+
+.main{
+margin-left:0;
+width:100%;
+padding:17px 13px 90px;
+}
+
+.welcome h1{font-size:22px}
+
+.summary{
+grid-template-columns:1fr 1fr;
+}
+
+.summary-card:last-child{
+grid-column:span 2;
+}
+
+.banner{
+padding:23px 18px;
+}
+
+.banner h2{font-size:21px}
+
+.account{
+grid-template-columns:1fr 1fr;
+}
+
+.status{
+grid-column:span 2;
+}
+
+.quick-links{
+grid-template-columns:1fr 1fr;
+}
+
+.mobile-nav{
+display:flex;
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:12px 5px;
+justify-content:space-around;
+border-top:1px solid #DCEFFC;
+z-index:10;
+}
+
+.mobile-nav button{
+background:none;
+border:0;
+color:#168FCB;
+font-size:11px;
+font-weight:bold;
+}
+
+.mobile-nav span{
+display:block;
+font-size:19px;
+margin-bottom:4px;
+}
+}
+
+@media(max-width:380px){
+.summary-card h2{font-size:18px}
+.quick-card{font-size:12px}
+.account{grid-template-columns:1fr}
+.status{grid-column:auto}
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading" style="padding:100px 20px;text-align:center;color:#168FCB">
+Loading HUT8 ADVANCED...
+</div>
+
+<div class="layout" id="app" style="display:none">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+<div class="brand">
+HUT8
+<span>ADVANCED</span>
+</div>
+
+<nav class="nav">
+<button class="active" onclick="goHome()">⌂ Dashboard</button>
+<button onclick="openSection('Deposit')">▣ Deposit</button>
+<button onclick="openSection('Withdraw')">▣ Withdraw</button>
+<button onclick="openSection('Investment Plans')">▥ Investment Plans</button>
+<button onclick="openSection('My Earnings')">◈ My Earnings</button>
+<button onclick="openSection('Transactions')">▤ Transactions</button>
+<button onclick="openSection('Referrals')">♧ Referrals</button>
+</nav>
+
+<button class="sidebar-logout" onclick="logout()">⇥ LOG OUT</button>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+
+<main class="main">
+
+<div class="topbar">
+<div class="welcome">
+<h1>Welcome, <span id="firstName">User</span>!</h1>
+<p>Your Financial Space</p>
+</div>
+
+<div class="profile-icon">♙</div>
+</div>
+
+<!-- FINANCIAL SUMMARY -->
+
+<div class="summary">
+
+<div class="summary-card">
+<div class="icon">▣</div>
+<p>Total Deposited</p>
+<h2 id="deposited">—</h2>
+</div>
+
+<div class="summary-card">
+<div class="icon">↗</div>
+<p>Total Withdrawn</p>
+<h2 id="withdrawn">—</h2>
+</div>
+
+<div class="summary-card">
+<div class="icon">◈</div>
+<p>Total Earnings</p>
+<h2 id="earnings">—</h2>
+</div>
+
+</div>
+
+<!-- PROMOTIONAL BANNER -->
+
+<div class="banner">
+<div>
+<h2>Welcome to HUT8 ADVANCED</h2>
+<p>Explore the services available on your account.</p>
+<button onclick="openSection('Investment Plans')">
+Explore Plans →
+</button>
+</div>
+</div>
+
+<!-- ACCOUNT INFORMATION -->
+
+<h3 class="section-title">Account Information</h3>
+
+<div class="account">
+
+<div>
+<div class="detail">
+<small>Full Name</small>
+<strong id="fullName">Loading...</strong>
+</div>
+
+<div class="detail">
+<small>Username</small>
+<strong id="username">Loading...</strong>
+</div>
+</div>
+
+<div>
+<div class="detail">
+<small>Email Address</small>
+<strong id="email">Loading...</strong>
+</div>
+
+<div class="detail">
+<small>Mobile Number</small>
+<strong id="mobile">Loading...</strong>
+</div>
+</div>
+
+<div class="status">
+<div style="font-size:28px">✓</div>
+<div>Account Status</div>
+<div style="margin-top:7px">Active</div>
+</div>
+
+</div>
+
+<!-- SERVICES -->
+
+<h3 class="section-title">Financial Services</h3>
+
+<div class="quick-links">
+
+<button class="quick-card" onclick="openSection('Deposit')">
+<span>▣</span> Deposit →
+</button>
+
+<button class="quick-card" onclick="openSection('Withdraw')">
+<span>▣</span> Withdraw →
+</button>
+
+<button class="quick-card" onclick="openSection('Investment Plans')">
+<span>▥</span> Investment Plans →
+</button>
+
+<button class="quick-card" onclick="openSection('My Earnings')">
+<span>◈</span> My Earnings →
+</button>
+
+<button class="quick-card" onclick="openSection('Transactions')">
+<span>▤</span> Transactions →
+</button>
+
+<button class="quick-card" onclick="openSection('Referrals')">
+<span>♧</span> Referrals →
+</button>
+
+</div>
+
+<!-- ACTIVITY -->
+
+<div class="activity">
+
+<div class="activity-header">
+<h3>Recent Activity</h3>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="transactions">
+<tr>
+<td colspan="4" class="empty">
+Your transactions will appear here.
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+</main>
+</div>
+
+<!-- MOBILE NAVIGATION -->
+
+<div class="mobile-nav" id="mobileNav" style="display:none">
+<button onclick="goHome()"><span>⌂</span>Home</button>
+<button onclick="openSection('Deposit')"><span>▣</span>Deposit</button>
+<button onclick="openSection('Investment Plans')"><span>▥</span>Plans</button>
+<button onclick="openSection('Transactions')"><span>▤</span>Activity</button>
+<button onclick="logout()"><span>⇥</span>Logout</button>
+</div>
+
+<script>
+
+// SUPABASE CONNECTION
+
+const SUPABASE_URL =
+"https://chjtxxwxhvjwpspmikme.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+
+const supabaseClient = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+// LOAD USER ACCOUNT
+
+async function loadDashboard(){
+
+try{
+
+const {data:sessionData,error:sessionError} =
+await supabaseClient.auth.getSession();
+
+if(sessionError) throw sessionError;
+
+const session = sessionData.session;
+
+if(!session){
+window.location.replace("index.html");
+return;
+}
+
+const {data:profile,error} = await supabaseClient
+.from("hut8_profiles")
+.select("full_name,username,mobile,email")
+.eq("id",session.user.id)
+.single();
+
+if(error) throw error;
+
+const name = profile.full_name || "User";
+
+document.getElementById("firstName").textContent =
+name.split(" ")[0];
+
+document.getElementById("fullName").textContent =
+name;
+
+document.getElementById("username").textContent =
+profile.username || "—";
+
+document.getElementById("email").textContent =
+profile.email || session.user.email || "—";
+
+document.getElementById("mobile").textContent =
+profile.mobile || "—";
+
+document.getElementById("loading").style.display="none";
+
+document.getElementById("app").style.display="flex";
+document.getElementById("mobileNav").style.display="flex";
+
+}catch(error){
+
+document.getElementById("loading").textContent =
+"Unable to load account: "+error.message;
+
+}
+
+}
+
+// NAVIGATION
+
+function goHome(){
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openSection(section){
+
+alert(section+" will be connected when we build that section.");
+
+}
+
+// LOGOUT
+
+async function logout(){
+
+if(!confirm("Are you sure you want to log out?")) return;
+
+const {error} = await supabaseClient.auth.signOut();
+
+if(error){
+alert(error.message);
+return;
+}
+
+window.location.replace("index.html");
+
+}
+
+// AUTHENTICATION LISTENER
+
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+
+if(event==="SIGNED_OUT"){
+window.location.replace("index.html");
+}
+
+});
+
+// START
+
+loadDashboard();
+
+</script>
+
+</body>
+  </html>
