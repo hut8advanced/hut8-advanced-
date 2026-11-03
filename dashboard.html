@@ -1178,5 +1178,189 @@ document.querySelectorAll("button").forEach(function(button){
   }, true);
 })();
     </script>
+
+<script>
+(function () {
+  const style = document.createElement("style");
+  style.textContent = `
+    #hut8LivePanel {
+      display:none;position:fixed;inset:0;z-index:999999;
+      overflow-y:auto;background:#f3f8fc;padding:20px;
+      font-family:Arial,sans-serif;color:#16344b;
+    }
+    #hut8LivePanel .record {
+      background:white;padding:16px;margin:12px 0;
+      border-radius:13px;box-shadow:0 3px 12px #173b5610;
+      overflow-wrap:anywhere;
+    }
+    #hut8LivePanel button {
+      border:0;border-radius:9px;padding:12px 18px;
+      background:#087fc1;color:white;font-weight:bold;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const panel = document.createElement("div");
+  panel.id = "hut8LivePanel";
+  panel.innerHTML = `
+    <div style="max-width:650px;margin:auto">
+      <button id="hut8LiveBack">← Back to Dashboard</button>
+      <h2 id="hut8LiveTitle">My Records</h2>
+      <div id="hut8LiveContent">Loading...</div>
+    </div>
+  `;
+  document.body.appendChild(panel);
+
+  const title = panel.querySelector("#hut8LiveTitle");
+  const content = panel.querySelector("#hut8LiveContent");
+
+  panel.querySelector("#hut8LiveBack").onclick = function () {
+    panel.style.display = "none";
+  };
+
+  function safe(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",
+      '"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  function cash(value) {
+    return "UGX " + Number(value || 0).toLocaleString("en-UG");
+  }
+
+  function showError(error) {
+    content.innerHTML =
+      '<div class="record" style="color:#b42318">' +
+      safe(error.message || error) + '</div>';
+  }
+
+  async function loadSection(section) {
+    panel.style.display = "block";
+    title.textContent = section;
+    content.innerHTML = "Loading your records...";
+
+    try {
+      if (typeof supabaseClient === "undefined") {
+        throw new Error("Supabase connection was not found in dashboard.html.");
+      }
+
+      const {data: authData, error: authError} =
+        await supabaseClient.auth.getUser();
+
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("Please log in again.");
+
+      const userId = authData.user.id;
+      let result;
+
+      if (section === "My Earnings") {
+        result = await supabaseClient
+          .from("hut8_earnings")
+          .select("amount,earning_date,description,status,created_at")
+          .eq("user_id", userId)
+          .order("earning_date", {ascending:false})
+          .limit(100);
+      }
+
+      if (section === "Transactions") {
+        result = await supabaseClient
+          .from("hut8_transactions")
+          .select("transaction_type,direction,amount,reference,description,status,created_at")
+          .eq("user_id", userId)
+          .order("created_at", {ascending:false})
+          .limit(100);
+      }
+
+      if (section === "Referrals") {
+        result = await supabaseClient
+          .from("hut8_referrals")
+          .select("referral_code,status,reward_amount,created_at,verified_at")
+          .or("referrer_id.eq." + userId + ",referred_user_id.eq." + userId)
+          .order("created_at", {ascending:false})
+          .limit(100);
+      }
+
+      if (result.error) throw result.error;
+
+      const rows = result.data || [];
+
+      if (!rows.length) {
+        content.innerHTML =
+          '<div class="record">No records available yet.</div>';
+        return;
+      }
+
+      content.innerHTML = rows.map(row => {
+        if (section === "My Earnings") {
+          return `<div class="record">
+            <h3>${cash(row.amount)}</h3>
+            <p>Date: ${safe(row.earning_date)}</p>
+            <p>Status: ${safe(row.status)}</p>
+            <p>${safe(row.description || "")}</p>
+          </div>`;
+        }
+
+        if (section === "Transactions") {
+          return `<div class="record">
+            <h3>${cash(row.amount)}</h3>
+            <p>Type: ${safe(row.transaction_type)}</p>
+            <p>Direction: ${safe(row.direction)}</p>
+            <p>Status: ${safe(row.status)}</p>
+            <p>Reference: ${safe(row.reference || "—")}</p>
+            <p>Date: ${safe(row.created_at)}</p>
+          </div>`;
+        }
+
+        return `<div class="record">
+          <h3>Referral record</h3>
+          <p>Referral code: ${safe(row.referral_code)}</p>
+          <p>Status: ${safe(row.status)}</p>
+          <p>Recorded reward: ${cash(row.reward_amount)}</p>
+          <p>Date: ${safe(row.created_at)}</p>
+        </div>`;
+      }).join("");
+
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  document.addEventListener("click", function (event) {
+    const item = event.target.closest(
+      "button,a,[role='button'],[onclick]"
+    );
+    if (!item) return;
+
+    const label = (item.innerText || item.textContent || "")
+      .trim().toLowerCase();
+
+    let section = "";
+    let destination = "";
+
+    if (label.includes("earning")) section = "My Earnings";
+    else if (label.includes("transaction")) section = "Transactions";
+    else if (label.includes("referral")) section = "Referrals";
+    else if (label.includes("deposit")) destination = "deposit.html";
+    else if (label.includes("withdraw")) destination = "withdraw.html";
+    else if (
+      label.includes("investment plan") ||
+      label.includes("explore plans") ||
+      label === "plans"
+    ) destination = "plans.html";
+
+    if (!section && !destination) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (section) loadSection(section);
+    if (destination) window.location.href = destination;
+
+  }, true);
+})();
+</script>
+</body>
+</html>
 </body>
   </html>
