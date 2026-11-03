@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUT8 ADVANCED | Investment Plans</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f3f8fc;
+ color:#16344b;
+}
+header{
+ background:#087fc1;
+ color:white;
+ padding:22px 18px;
+}
+header h2{margin:0;font-size:22px}
+header p{margin:7px 0 0;font-size:13px}
+.container{padding:20px;max-width:750px;margin:auto}
+.intro{margin-bottom:20px}
+.intro h2{margin-bottom:7px}
+.intro p{color:#668096;font-size:14px;line-height:1.5}
+.plan{
+ background:white;
+ border-radius:17px;
+ padding:18px;
+ margin-bottom:18px;
+ box-shadow:0 4px 18px #173b5610;
+ border:1px solid #e1edf5;
+}
+.machine{
+ height:145px;
+ border-radius:13px;
+ background:linear-gradient(135deg,#d9f0ff,#8acdf2);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ margin-bottom:15px;
+}
+.machine span{font-size:67px}
+.plan h3{margin:5px 0;color:#087fc1;font-size:21px}
+.price{font-size:24px;font-weight:bold;margin:12px 0}
+.details{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ padding:12px 0;
+ border-top:1px solid #edf2f6;
+ font-size:13px;
+}
+.details strong{color:#173c58}
+.note{
+ background:#eef7fc;
+ border-radius:10px;
+ padding:12px;
+ font-size:12px;
+ line-height:1.5;
+ color:#526d80;
+ margin-top:12px;
+}
+button{
+ width:100%;
+ border:0;
+ border-radius:10px;
+ padding:14px;
+ background:#087fc1;
+ color:white;
+ font-size:15px;
+ font-weight:bold;
+ margin-top:14px;
+}
+button:active{opacity:.8}
+.back{
+ display:block;
+ text-align:center;
+ color:#087fc1;
+ text-decoration:none;
+ margin:22px 0;
+ font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <h2>HUT8 ADVANCED</h2>
+ <p>Investment Plans</p>
+</header>
+
+<main class="container">
+ <div class="intro">
+  <h2>Choose Your Machine</h2>
+  <p>Explore the available machine plans, investment amounts and lock periods.</p>
+ </div>
+
+ <section class="plan">
+  <div class="machine"><span>⚙️</span></div>
+  <h3>J-1 MACHINE</h3>
+  <div class="price">UGX 70,000</div>
+  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
+  <div class="details"><span>Plan reference</span><strong>J-1</strong></div>
+  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
+  <button onclick="selectPlan('J-1',70000,30)">Select J-1</button>
+ </section>
+
+ <section class="plan">
+  <div class="machine"><span>🏭</span></div>
+  <h3>J-2 MACHINE</h3>
+  <div class="price">UGX 210,000</div>
+  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
+  <div class="details"><span>Plan reference</span><strong>J-2</strong></div>
+  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
+  <button onclick="selectPlan('J-2',210000,30)">Select J-2</button>
+ </section>
+
+ <section class="plan">
+  <div class="machine"><span>🏗️</span></div>
+  <h3>J-3 MACHINE</h3>
+  <div class="price">UGX 500,000</div>
+  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
+  <div class="details"><span>Plan reference</span><strong>J-3</strong></div>
+  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
+  <button onclick="selectPlan('J-3',500000,30)">Select J-3</button>
+ </section>
+
+ <section class="plan">
+  <div class="machine"><span>🏢</span></div>
+  <h3>J-4 MACHINE</h3>
+  <div class="price">UGX 1,250,000</div>
+  <div class="details"><span>Lock duration</span><strong>25 Days</strong></div>
+  <div class="details"><span>Plan reference</span><strong>J-4</strong></div>
+  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
+  <button onclick="selectPlan('J-4',1250000,25)">Select J-4</button>
+ </section>
+
+ <section class="plan">
+  <div class="machine"><span>🏭</span></div>
+  <h3>J-5 MACHINE</h3>
+  <div class="price">UGX 2,500,000</div>
+  <div class="details"><span>Lock duration</span><strong>25 Days</strong></div>
+  <div class="details"><span>Plan reference</span><strong>J-5</strong></div>
+  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
+  <button onclick="selectPlan('J-5',2500000,25)">Select J-5</button>
+ </section>
+
+ <a class="back" href="dashboard.html">← Back to Dashboard</a>
+</main>
+
+<script>
+function selectPlan(name,amount,days){
+ sessionStorage.setItem("hut8_selected_plan",JSON.stringify({
+  plan_name:name,
+  amount:amount,
+  duration_days:days
+ }));
+ alert(name+" selected. Your selection has been saved for this session.");
+}
+</script>
+
+</body>
+  </html>
+  
