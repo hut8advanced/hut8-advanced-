@@ -1144,5 +1144,39 @@ document.querySelectorAll("button").forEach(function(button){
 </script>
 </body>
 </html>
+
+<script>
+(function () {
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("button, a, [onclick]");
+    if (!button) return;
+
+    const label = (button.innerText || button.textContent || "")
+      .trim().toLowerCase();
+
+    let destination = "";
+
+    if (label.includes("deposit")) {
+      destination = "deposit.html";
+    } 
+    else if (label.includes("withdraw")) {
+      destination = "withdraw.html";
+    } 
+    else if (
+      label.includes("investment plan") ||
+      label === "plans" ||
+      label.includes("explore plans")
+    ) {
+      destination = "plans.html";
+    }
+
+    if (destination) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.location.href = destination;
+    }
+  }, true);
+})();
+    </script>
 </body>
   </html>
