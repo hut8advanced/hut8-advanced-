@@ -703,5 +703,26 @@ loadDashboard();
 
 </script>
 
-</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  document.querySelectorAll("button, a").forEach(function(element) {
+
+    const text = element.textContent.trim().toLowerCase();
+
+    if (text === "deposit" || text === "deposit funds") {
+      element.onclick = function(event) {
+        event.preventDefault();
+        window.location.href = "deposit.html";
+      };
+
+      if (element.tagName === "A") {
+        element.href = "deposit.html";
+      }
+    }
+
+  });
+
+});
+</script></body>
   </html>
