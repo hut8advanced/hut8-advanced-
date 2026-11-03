@@ -942,5 +942,35 @@ document.querySelectorAll("button").forEach(function(button){
   }
 
 });
-  </script></body>
+  </script>
+<script>
+(function () {
+  const pageLinks = {
+    "dashboard": "dashboard.html",
+    "deposit": "deposit.html",
+    "withdraw": "withdraw.html",
+    "investment plans": "plans.html",
+    "plans": "plans.html",
+    "my earnings": "earnings.html",
+    "earnings": "earnings.html",
+    "transactions": "transactions.html",
+    "referrals": "referrals.html"
+  };
+
+  document.querySelectorAll("button, a").forEach(function (item) {
+    const label = (item.innerText || item.textContent || "")
+      .trim().toLowerCase();
+
+    if (pageLinks[label]) {
+      item.addEventListener("click", function (event) {
+        event.preventDefault();
+        window.location.href = pageLinks[label];
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>
+</body>
   </html>
