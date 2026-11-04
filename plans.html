@@ -736,6 +736,98 @@ window.selectPlan = async function(name, amount, days) {
     alert("Could not submit your plan: " + error.message);
   }
 };
+</script><script>
+const HUT8_PLAN_URL =
+"https://chjtxxwxhvjwpspmikme.supabase.co";
+
+const HUT8_PLAN_KEY =
+"sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+
+const hut8PlanClient = window.supabase.createClient(
+  HUT8_PLAN_URL,
+  HUT8_PLAN_KEY
+);
+
+window.selectPlan = async function(name, amount, days) {
+  try {
+    amount = Number(amount);
+    days = Number(days);
+
+    if (!Number.isFinite(amount) || amount <= 0 ||
+        !Number.isInteger(days) || days <= 0) {
+      alert("Invalid plan details.");
+      return;
+    }
+
+    const { data: sessionData, error: sessionError } =
+      await hut8PlanClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const user = sessionData.session?.user;
+
+    if (!user) {
+      alert("Please log in first.");
+      location.href = "index.html";
+      return;
+    }
+
+    // Read the user's actual account balance.
+    const { data: profile, error: profileError } =
+      await hut8PlanClient
+        .from("hut8_profiles")
+        .select("balance")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    const balance = Number(profile.balance || 0);
+
+    if (balance < amount) {
+      alert(
+        "INSUFFICIENT BALANCE\n\n" +
+        "Available balance: " + balance.toLocaleString() +
+        "\nPlan amount: " + amount.toLocaleString() +
+        "\n\nPlease add funds before applying."
+      );
+      return;
+    }
+
+    const planCode =
+      String(name).match(/[JK]-\d+/i)?.[0] || String(name);
+
+    const series = /^J/i.test(planCode)
+      ? "J Series"
+      : "K Series";
+
+    // Submit an application for admin review.
+    const { error: insertError } =
+      await hut8PlanClient
+        .from("hut8_plan_enrollments")
+        .insert({
+          user_id: user.id,
+          plan_code: planCode,
+          plan_name: String(name),
+          series: series,
+          amount: amount,
+          duration_days: days,
+          status: "pending"
+        });
+
+    if (insertError) throw insertError;
+
+    alert(
+      "BALANCE CHECK SUCCESSFUL\n\n" +
+      "Your " + name + " application has been submitted.\n" +
+      "It is awaiting approval."
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert("Plan application failed: " + error.message);
+  }
+};
 </script></body>
  </html>
  
