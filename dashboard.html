@@ -1,1706 +1,479 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HUT8 ADVANCED Dashboard</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
-body{
-font-family:Arial,sans-serif;
-background:#F3FAFF;
-color:#12345A;
-}
-
-.layout{
-display:flex;
-min-height:100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:225px;
-background:#279FD5;
-color:white;
-padding:25px 15px;
-display:flex;
-flex-direction:column;
-position:fixed;
-top:0;
-bottom:0;
-left:0;
-}
-
-.brand{
-text-align:center;
-font-size:25px;
-font-weight:900;
-margin:20px 0 45px;
-}
-
-.brand span{
-display:block;
-font-size:13px;
-margin-top:5px;
-}
-
-.nav{
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.nav button{
-background:transparent;
-border:0;
-color:white;
-padding:15px 12px;
-text-align:left;
-border-radius:12px;
-font-size:15px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.nav button:hover,
-.nav button.active{
-background:#078DCB;
-}
-
-.sidebar-logout{
-margin-top:auto;
-border:2px solid white;
-border-radius:30px;
-background:transparent;
-color:white;
-padding:14px;
-font-weight:bold;
-font-size:15px;
-cursor:pointer;
-}
-
-/* MAIN */
-
-.main{
-margin-left:225px;
-width:calc(100% - 225px);
-padding:25px;
-}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
-
-.welcome h1{
-font-size:29px;
-color:#12345A;
-}
-
-.welcome p{
-color:#299FCB;
-margin-top:7px;
-}
-
-.profile-icon{
-background:#55C9F0;
-color:white;
-width:48px;
-height:48px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-}
-
-/* SUMMARY */
-
-.summary{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-margin-bottom:23px;
-}
-
-.summary-card{
-background:white;
-padding:20px;
-border-radius:17px;
-box-shadow:0 3px 12px rgba(0,130,190,.10);
-border:1px solid #DCEFFC;
-}
-
-.summary-card .icon{
-font-size:28px;
-margin-bottom:12px;
-}
-
-.summary-card p{
-font-size:13px;
-color:#607D96;
-margin-bottom:8px;
-}
-
-.summary-card h2{
-font-size:23px;
-color:#249FD5;
-}
-
-/* BANNER */
-
-.banner{
-background:linear-gradient(110deg,#0876C9,#55C9F0);
-padding:30px;
-border-radius:22px;
-color:white;
-margin-bottom:23px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-min-height:155px;
-}
-
-.banner h2{
-font-size:27px;
-margin-bottom:10px;
-}
-
-.banner p{
-font-size:14px;
-}
-
-.banner button{
-background:white;
-color:#087DC1;
-border:0;
-padding:12px 22px;
-border-radius:30px;
-font-weight:bold;
-margin-top:17px;
-cursor:pointer;
-}
-
-/* ACCOUNT */
-
-.section-title{
-font-size:20px;
-margin:20px 0 15px;
-color:#168FCB;
-}
-
-.account{
-background:white;
-padding:22px;
-border-radius:18px;
-box-shadow:0 3px 12px rgba(0,130,190,.08);
-border:1px solid #DCEFFC;
-display:grid;
-grid-template-columns:1fr 1fr 150px;
-gap:20px;
-align-items:center;
-}
-
-.detail{
-margin-bottom:18px;
-}
-
-.detail:last-child{
-margin-bottom:0;
-}
-
-.detail small{
-display:block;
-color:#7890A5;
-margin-bottom:6px;
-}
-
-.detail strong{
-font-size:14px;
-word-break:break-word;
-}
-
-.status{
-background:#E6F7FF;
-padding:20px 10px;
-text-align:center;
-border-radius:15px;
-color:#168FCB;
-font-weight:bold;
-}
-
-/* QUICK LINKS */
-
-.quick-links{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:13px;
-}
-
-.quick-card{
-background:white;
-border:1px solid #D7ECFA;
-border-radius:16px;
-padding:22px 12px;
-display:flex;
-align-items:center;
-gap:12px;
-color:#168FCB;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 3px 10px rgba(0,130,190,.07);
-text-align:left;
-}
-
-.quick-card span{
-font-size:27px;
-}
-
-.quick-card:hover{
-background:#EAF8FF;
-}
-
-/* ACTIVITY */
-
-.activity{
-background:white;
-border-radius:17px;
-padding:20px;
-margin-top:23px;
-border:1px solid #DCEFFC;
-overflow-x:auto;
-}
-
-.activity-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
-}
-
-.activity-header h3{
-color:#168FCB;
-font-size:19px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:450px;
-}
-
-th,td{
-padding:13px 10px;
-text-align:left;
-border-bottom:1px solid #E5F2F9;
-font-size:13px;
-}
-
-th{
-background:#EAF7FF;
-}
-
-.empty{
-text-align:center;
-padding:25px;
-color:#7890A5;
-}
-
-/* MOBILE */
-
-.mobile-nav{
-display:none;
-}
-
-@media(max-width:850px){
-
-.sidebar{display:none}
-
-.main{
-margin-left:0;
-width:100%;
-padding:17px 13px 90px;
-}
-
-.welcome h1{font-size:22px}
-
-.summary{
-grid-template-columns:1fr 1fr;
-}
-
-.summary-card:last-child{
-grid-column:span 2;
-}
-
-.banner{
-padding:23px 18px;
-}
-
-.banner h2{font-size:21px}
-
-.account{
-grid-template-columns:1fr 1fr;
-}
-
-.status{
-grid-column:span 2;
-}
-
-.quick-links{
-grid-template-columns:1fr 1fr;
-}
-
-.mobile-nav{
-display:flex;
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-padding:12px 5px;
-justify-content:space-around;
-border-top:1px solid #DCEFFC;
-z-index:10;
-}
-
-.mobile-nav button{
-background:none;
-border:0;
-color:#168FCB;
-font-size:11px;
-font-weight:bold;
-}
-
-.mobile-nav span{
-display:block;
-font-size:19px;
-margin-bottom:4px;
-}
-}
-
-@media(max-width:380px){
-.summary-card h2{font-size:18px}
-.quick-card{font-size:12px}
-.account{grid-template-columns:1fr}
-.status{grid-column:auto}
+body{font-family:Arial,sans-serif;background:#f3faff;color:#12345a}
+button{cursor:pointer;font-family:inherit}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:235px;background:#279fd5;color:white;padding:25px 15px;position:fixed;inset:0 auto 0 0;overflow-y:auto}
+.logo{font-size:23px;font-weight:800;margin-bottom:8px}
+.sublogo{font-size:12px;margin-bottom:30px;opacity:.85}
+.nav button{display:block;width:100%;text-align:left;padding:14px;margin:5px 0;border:0;border-radius:9px;background:transparent;color:white;font-size:15px}
+.nav button:hover,.nav button.active{background:#ffffff30}
+.main{margin-left:235px;width:calc(100% - 235px);padding:25px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
+.top h2{font-size:23px}
+.logout{background:#12345a;color:white;border:0;border-radius:8px;padding:11px 17px}
+.welcome{background:linear-gradient(120deg,#279fd5,#65c5ed);padding:25px;border-radius:17px;color:white;margin-bottom:20px}
+.welcome h2{font-size:23px;margin-bottom:8px}
+.welcome p{opacity:.9}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:22px}
+.card{background:white;padding:20px;border-radius:14px;box-shadow:0 3px 14px #12345a0c}
+.card small{color:#6c8298}
+.card h2{font-size:23px;margin-top:10px;color:#12345a;overflow-wrap:anywhere}
+.section-title{font-size:19px;margin:22px 0 13px}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.action{background:white;border:1px solid #e2f0f8;padding:19px;border-radius:13px;text-align:left;color:#12345a}
+.action strong{display:block;font-size:16px;margin-bottom:7px}
+.action span{font-size:12px;color:#71869b}
+.action:hover{border-color:#279fd5}
+.content-panel{background:white;border-radius:14px;padding:18px;margin:15px 0;overflow-wrap:anywhere}
+.record{padding:15px;border:1px solid #e6f0f6;border-radius:11px;margin:12px 0}
+.record strong{font-size:17px}
+.record p{margin-top:7px;font-size:14px;color:#526b82}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#e8f5fc;font-size:12px;margin-top:8px}
+.back{background:#279fd5;color:white;border:0;padding:11px 17px;border-radius:8px;margin-bottom:15px}
+.copy{background:#279fd5;color:white;border:0;padding:12px 16px;border-radius:8px;margin:8px 5px 8px 0}
+.share{background:#12345a;color:white;border:0;padding:12px 16px;border-radius:8px}
+.empty{padding:22px;text-align:center;color:#71869b}
+.mobile-nav{display:none}
+.loading{text-align:center;padding:35px}
+.error{color:#b42318;padding:12px}
+@media(max-width:800px){
+ .sidebar{display:none}
+ .main{margin-left:0;width:100%;padding:17px 14px 90px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .card{padding:15px}
+ .card h2{font-size:19px}
+ .actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .action{padding:15px}
+ .top h2{font-size:19px}
+ .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;box-shadow:0 -3px 15px #12345a18;z-index:1000;justify-content:space-around;padding:9px 3px}
+ .mobile-nav button{background:none;border:0;color:#12345a;font-size:11px;padding:6px 3px}
+ .mobile-nav button span{display:block;font-size:18px;margin-bottom:3px}
 }
 </style>
 </head>
 
 <body>
-
-<div id="loading" style="padding:100px 20px;text-align:center;color:#168FCB">
-Loading HUT8 ADVANCED...
-</div>
-
-<div class="layout" id="app" style="display:none">
-
-<!-- SIDEBAR -->
-
-<aside class="sidebar">
-
-<div class="brand">
-HUT8
-<span>ADVANCED</span>
-</div>
-
-<nav class="nav">
-<button class="active" onclick="goHome()">⌂ Dashboard</button>
-<button onclick="openSection('Deposit')">▣ Deposit</button>
-<button onclick="openSection('Withdraw')">▣ Withdraw</button>
-<button onclick="openSection('Investment Plans')">▥ Investment Plans</button>
-<button onclick="openSection('My Earnings')">◈ My Earnings</button>
-<button onclick="openSection('Transactions')">▤ Transactions</button>
-<button onclick="openSection('Referrals')">♧ Referrals</button>
-</nav>
-
-<button class="sidebar-logout" onclick="logout()">⇥ LOG OUT</button>
-
-</aside>
-
-<!-- MAIN CONTENT -->
-
-<main class="main">
-
-<div class="topbar">
-<div class="welcome">
-<h1>Welcome, <span id="firstName">User</span>!</h1>
-<p>Your Financial Space</p>
-</div>
-
-<div class="profile-icon">♙</div>
-</div>
-
-<!-- FINANCIAL SUMMARY -->
-
-<div class="summary">
-
-<div class="summary-card">
-<div class="icon">▣</div>
-<p>Total Deposited</p>
-<h2 id="deposited">—</h2>
-</div>
-
-<div class="summary-card">
-<div class="icon">↗</div>
-<p>Total Withdrawn</p>
-<h2 id="withdrawn">—</h2>
-</div>
-
-<div class="summary-card">
-<div class="icon">◈</div>
-<p>Total Earnings</p>
-<h2 id="earnings">—</h2>
-</div>
-
-</div>
-
-<!-- PROMOTIONAL BANNER -->
-
-<div class="banner">
-<div>
-<h2>Welcome to HUT8 ADVANCED</h2>
-<p>Explore the services available on your account.</p>
-<button onclick="openSection('Investment Plans')">
-Explore Plans →
-</button>
-</div>
-</div>
-
-<!-- ACCOUNT INFORMATION -->
-
-<h3 class="section-title">Account Information</h3>
-
-<div class="account">
-
-<div>
-<div class="detail">
-<small>Full Name</small>
-<strong id="fullName">Loading...</strong>
-</div>
-
-<div class="detail">
-<small>Username</small>
-<strong id="username">Loading...</strong>
-</div>
-</div>
-
-<div>
-<div class="detail">
-<small>Email Address</small>
-<strong id="email">Loading...</strong>
-</div>
-
-<div class="detail">
-<small>Mobile Number</small>
-<strong id="mobile">Loading...</strong>
-</div>
-</div>
-
-<div class="status">
-<div style="font-size:28px">✓</div>
-<div>Account Status</div>
-<div style="margin-top:7px">Active</div>
-</div>
-
-</div>
-
-<!-- SERVICES -->
-
-<h3 class="section-title">Financial Services</h3>
-
-<div class="quick-links">
-
-<button class="quick-card" onclick="openSection('Deposit')">
-<span>▣</span> Deposit →
-</button>
-
-<button class="quick-card" onclick="openSection('Withdraw')">
-<span>▣</span> Withdraw →
-</button>
-
-<button class="quick-card" onclick="openSection('Investment Plans')">
-<span>▥</span> Investment Plans →
-</button>
-
-<button class="quick-card" onclick="openSection('My Earnings')">
-<span>◈</span> My Earnings →
-</button>
-
-<button class="quick-card" onclick="openSection('Transactions')">
-<span>▤</span> Transactions →
-</button>
-
-<button class="quick-card" onclick="openSection('Referrals')">
-<span>♧</span> Referrals →
-</button>
-
-</div>
-
-<!-- ACTIVITY -->
-
-<div class="activity">
-
-<div class="activity-header">
-<h3>Recent Activity</h3>
-</div>
-
-<table>
-<thead>
-<tr>
-<th>Date</th>
-<th>Description</th>
-<th>Amount</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody id="transactions">
-<tr>
-<td colspan="4" class="empty">
-Your transactions will appear here.
-</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-
-</main>
-</div>
-
-<!-- MOBILE NAVIGATION -->
-
-<div class="mobile-nav" id="mobileNav" style="display:none">
-<button onclick="goHome()"><span>⌂</span>Home</button>
-<button onclick="openSection('Deposit')"><span>▣</span>Deposit</button>
-<button onclick="openSection('Investment Plans')"><span>▥</span>Plans</button>
-<button onclick="openSection('Transactions')"><span>▤</span>Activity</button>
-<button onclick="logout()"><span>⇥</span>Logout</button>
+<div id="app">
+  <div class="loading">Connecting to HUT8 ADVANCED...</div>
 </div>
 
 <script>
+const SUPABASE_URL = "https://chjtxxwxhvjwpspmikme.supabase.co";
+const SUPABASE_KEY = "sb_publishable_g8m0qRrMveb8A7H3BLYYg_g21-SBKA";
 
-// SUPABASE CONNECTION
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SUPABASE_URL =
-"https://chjtxxwxhvjwpspmikme.supabase.co";
+let currentUser = null;
+let profile = null;
 
-const SUPABASE_KEY =
-"sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+const app = document.getElementById("app");
 
-const supabaseClient = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-// LOAD USER ACCOUNT
-
-async function loadDashboard(){
-
-try{
-
-const {data:sessionData,error:sessionError} =
-await supabaseClient.auth.getSession();
-
-if(sessionError) throw sessionError;
-
-const session = sessionData.session;
-
-if(!session){
-window.location.replace("index.html");
-return;
+function money(value){
+  return Number(value || 0).toLocaleString();
 }
 
-const {data:profile,error} = await supabaseClient
-.from("hut8_profiles")
-.select("full_name,username,mobile,email")
-.eq("id",session.user.id)
-.single();
-
-if(error) throw error;
-
-const name = profile.full_name || "User";
-
-document.getElementById("firstName").textContent =
-name.split(" ")[0];
-
-document.getElementById("fullName").textContent =
-name;
-
-document.getElementById("username").textContent =
-profile.username || "—";
-
-document.getElementById("email").textContent =
-profile.email || session.user.email || "—";
-
-document.getElementById("mobile").textContent =
-profile.mobile || "—";
-
-document.getElementById("loading").style.display="none";
-
-document.getElementById("app").style.display="flex";
-document.getElementById("mobileNav").style.display="flex";
-
-}catch(error){
-
-document.getElementById("loading").textContent =
-"Unable to load account: "+error.message;
-
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
+function dateText(value){
+  if(!value) return "Date unavailable";
+  const d = new Date(value);
+  return isNaN(d) ? esc(value) : d.toLocaleString();
 }
 
-// NAVIGATION
+async function startDashboard(){
+  const {data,error} = await db.auth.getSession();
+
+  if(error || !data.session){
+    app.innerHTML = `
+      <div class="loading">
+        <h2>Please log in</h2>
+        <p>Your HUT8 session is not active.</p>
+        <br><a href="index.html">Go to login</a>
+      </div>`;
+    return;
+  }
+
+  currentUser = data.session.user;
+
+  await loadProfile();
+  renderDashboard();
+  await refreshSummary();
+}
+
+async function loadProfile(){
+  const {data,error} = await db
+    .from("hut8_profiles")
+    .select("id,full_name,username,mobile,email,balance,referral_code,referred_by")
+    .eq("id",currentUser.id)
+    .maybeSingle();
+
+  if(error){
+    console.error("Profile error:",error.message);
+  }
+
+  profile = data || {
+    id:currentUser.id,
+    full_name:currentUser.user_metadata?.full_name || "",
+    username:currentUser.user_metadata?.username || "",
+    email:currentUser.email || "",
+    balance:0
+  };
+}
+
+function renderDashboard(){
+  const name = profile.full_name || profile.username || currentUser.email;
+
+  app.innerHTML = `
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">HUT8 ADVANCED</div>
+      <div class="sublogo">Your account dashboard</div>
+      <div class="nav">
+        <button class="active" data-page="home">⌂ &nbsp; Home</button>
+        <button data-page="deposit">＋ &nbsp; Deposit</button>
+        <button data-page="withdraw">↗ &nbsp; Withdraw</button>
+        <button data-page="plans">▦ &nbsp; Investment Plans</button>
+        <button data-page="earnings">◈ &nbsp; My Earnings</button>
+        <button data-page="transactions">▤ &nbsp; Transactions</button>
+        <button data-page="referrals">♧ &nbsp; Referrals</button>
+        <button data-page="profile">◎ &nbsp; My Profile</button>
+        <button data-page="logout">⇥ &nbsp; Logout</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="top">
+        <h2>Dashboard</h2>
+        <button class="logout" data-page="logout">Logout</button>
+      </div>
+
+      <section id="pageContent">
+        <div class="welcome">
+          <h2>Welcome, ${esc(name)}</h2>
+          <p>Manage your HUT8 ADVANCED account.</p>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <small>Account Balance</small>
+            <h2 id="balanceValue">Loading...</h2>
+          </div>
+          <div class="card">
+            <small>Total Deposited</small>
+            <h2 id="depositValue">Loading...</h2>
+          </div>
+          <div class="card">
+            <small>Total Withdrawn</small>
+            <h2 id="withdrawValue">Loading...</h2>
+          </div>
+          <div class="card">
+            <small>Recorded Earnings</small>
+            <h2 id="earningValue">Loading...</h2>
+          </div>
+          <div class="card">
+            <small>Account Name</small>
+            <h2 style="font-size:16px">${esc(name)}</h2>
+          </div>
+          <div class="card">
+            <small>Account Status</small>
+            <h2 style="font-size:17px">Registered</h2>
+          </div>
+        </div>
+
+        <h3 class="section-title">Your account services</h3>
+        <div class="actions">
+          <button class="action" data-page="deposit"><strong>＋ Deposit</strong><span>Submit a deposit request</span></button>
+          <button class="action" data-page="withdraw"><strong>↗ Withdraw</strong><span>Submit a withdrawal request</span></button>
+          <button class="action" data-page="plans"><strong>▦ Investment Plans</strong><span>Explore available plans</span></button>
+          <button class="action" data-page="earnings"><strong>◈ My Earnings</strong><span>View recorded earnings</span></button>
+          <button class="action" data-page="transactions"><strong>▤ Transactions</strong><span>View account transactions</span></button>
+          <button class="action" data-page="referrals"><strong>♧ Referrals</strong><span>View and share your referral link</span></button>
+          <button class="action" data-page="profile"><strong>◎ My Profile</strong><span>View your account information</span></button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <button data-page="home"><span>⌂</span>Home</button>
+    <button data-page="deposit"><span>＋</span>Deposit</button>
+    <button data-page="withdraw"><span>↗</span>Withdraw</button>
+    <button data-page="plans"><span>▦</span>Plans</button>
+    <button data-page="profile"><span>◎</span>Profile</button>
+  </nav>
+  </div>`;
+
+  document.querySelectorAll("[data-page]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      openPage(button.dataset.page);
+    });
+  });
+}
+
+async function refreshSummary(){
+  const balance = Number(profile.balance || 0);
+
+  const {data,error} = await db
+    .from("hut8_transactions")
+    .select("transaction_type,direction,amount,status")
+    .eq("user_id",currentUser.id);
+
+  if(error){
+    console.error("Summary transaction error:",error.message);
+    setText("balanceValue",money(balance));
+    setText("depositValue","—");
+    setText("withdrawValue","—");
+    setText("earningValue","—");
+    return;
+  }
+
+  let deposits=0,withdrawals=0,earnings=0;
+
+  (data || []).forEach(row=>{
+    if(row.status !== "completed") return;
+    const amount = Number(row.amount || 0);
+    const type = String(row.transaction_type || "").toLowerCase();
+
+    if(type === "deposit" && row.direction === "credit") deposits += amount;
+    if(type === "withdrawal" && row.direction === "debit") withdrawals += amount;
+    if(type === "earning" && row.direction === "credit") earnings += amount;
+  });
+
+  setText("balanceValue",money(balance));
+  setText("depositValue",money(deposits));
+  setText("withdrawValue",money(withdrawals));
+  setText("earningValue",money(earnings));
+}
+
+function setText(id,value){
+  const element=document.getElementById(id);
+  if(element) element.textContent=value;
+}
+
+function openPage(page){
+  if(page==="home"){
+    location.href="dashboard.html";
+    return;
+  }
+  if(page==="deposit"){
+    location.href="deposit.html";
+    return;
+  }
+  if(page==="withdraw"){
+    location.href="withdraw.html";
+    return;
+  }
+  if(page==="plans"){
+    location.href="plans.html";
+    return;
+  }
+  if(page==="logout"){
+    logout();
+    return;
+  }
+  if(page==="earnings") showEarnings();
+  if(page==="transactions") showTransactions();
+  if(page==="referrals") showReferrals();
+  if(page==="profile") showProfile();
+}
+
+function panel(title,html){
+  const content=document.getElementById("pageContent");
+  content.innerHTML=`
+    <button class="back" onclick="goHome()">← Back to Dashboard</button>
+    <h2 style="margin:10px 0 18px">${esc(title)}</h2>
+    ${html}`;
+}
 
 function goHome(){
-window.scrollTo({top:0,behavior:"smooth"});
+  renderDashboard();
+  refreshSummary();
 }
 
-function openSection(section){
+async function showEarnings(){
+  panel("My Earnings",'<div class="loading">Loading your earnings...</div>');
 
-alert(section+" will be connected when we build that section.");
+  const {data,error}=await db
+    .from("hut8_earnings")
+    .select("*")
+    .eq("user_id",currentUser.id)
+    .order("created_at",{ascending:false});
 
+  if(error){
+    panel("My Earnings",`<p class="error">Unable to load earnings: ${esc(error.message)}</p>`);
+    return;
+  }
+
+  let html="";
+  if(!data?.length) html='<div class="empty">No earnings records found.</div>';
+
+  (data || []).forEach(r=>{
+    html+=`
+      <div class="record">
+        <strong>${money(r.amount)}</strong>
+        <p>${esc(r.description || "Earnings record")}</p>
+        <p>Date: ${dateText(r.earning_date || r.created_at)}</p>
+        <span class="status">${esc(r.status)}</span>
+      </div>`;
+  });
+
+  panel("My Earnings",html);
 }
 
-// LOGOUT
+async function showTransactions(){
+  panel("Transactions",'<div class="loading">Loading your transactions...</div>');
+
+  const {data,error}=await db
+    .from("hut8_transactions")
+    .select("transaction_type,direction,amount,reference,description,status,created_at")
+    .eq("user_id",currentUser.id)
+    .order("created_at",{ascending:false});
+
+  if(error){
+    panel("Transactions",`<p class="error">Unable to load transactions: ${esc(error.message)}</p>`);
+    return;
+  }
+
+  let html="";
+  if(!data?.length) html='<div class="empty">No transactions recorded yet.</div>';
+
+  (data || []).forEach(r=>{
+    html+=`
+      <div class="record">
+        <strong>${money(r.amount)}</strong>
+        <p>Type: ${esc(r.transaction_type)}</p>
+        <p>Direction: ${esc(r.direction)}</p>
+        <p>Status: ${esc(r.status)}</p>
+        <p>Reference: ${esc(r.reference || "—")}</p>
+        <p>${esc(r.description || "")}</p>
+        <small>${dateText(r.created_at)}</small>
+      </div>`;
+  });
+
+  panel("Transactions",html);
+}
+
+async function showReferrals(){
+  panel("Referrals",'<div class="loading">Loading your referrals...</div>');
+
+  const {data:refProfile,error:profileError}=await db
+    .from("hut8_profiles")
+    .select("referral_code")
+    .eq("id",currentUser.id)
+    .maybeSingle();
+
+  if(profileError){
+    panel("Referrals",`<p class="error">${esc(profileError.message)}</p>`);
+    return;
+  }
+
+  const code=refProfile?.referral_code || "";
+  const link=new URL("index.html",location.href);
+  if(code) link.searchParams.set("ref",code);
+
+  const {data,error}=await db
+    .from("hut8_referrals")
+    .select("referral_code,status,reward_amount,created_at,verified_at")
+    .eq("referrer_id",currentUser.id)
+    .order("created_at",{ascending:false});
+
+  if(error){
+    panel("Referrals",`<p class="error">Unable to load referrals: ${esc(error.message)}</p>`);
+    return;
+  }
+
+  let html=`
+    <div class="content-panel">
+      <h3>Your referral link</h3>
+      <p style="overflow-wrap:anywhere;margin:12px 0" id="referralLink">${esc(link.href)}</p>
+      <button class="copy" id="copyReferral">Copy Link</button>
+      <button class="share" id="shareReferral">Share Link</button>
+      ${!code ? '<p class="error">Your account does not have a referral code yet.</p>' : ''}
+    </div>
+    <h3 class="section-title">Referral Records</h3>`;
+
+  if(!data?.length) html+='<div class="empty">No referrals recorded yet.</div>';
+
+  (data || []).forEach(r=>{
+    html+=`
+      <div class="record">
+        <strong>Reward: ${money(r.reward_amount)}</strong>
+        <p>Code: ${esc(r.referral_code)}</p>
+        <p>Status: ${esc(r.status)}</p>
+        <small>${dateText(r.created_at)}</small>
+      </div>`;
+  });
+
+  panel("Referrals",html);
+
+  document.getElementById("copyReferral").onclick=async()=>{
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(link.href);
+      }else{
+        const input=document.createElement("textarea");
+        input.value=link.href;
+        document.body.appendChild(input);
+        input.select();
+        const copied=document.execCommand("copy");
+        input.remove();
+        if(!copied) throw new Error("Copy unavailable");
+      }
+      alert("Referral link copied.");
+    }catch(e){
+      prompt("Copy your referral link:",link.href);
+    }
+  };
+
+  document.getElementById("shareReferral").onclick=async()=>{
+    if(navigator.share){
+      try{await navigator.share({title:"HUT8 ADVANCED",url:link.href});}
+      catch(e){}
+    }else{
+      prompt("Copy your referral link:",link.href);
+    }
+  };
+}
+
+function showProfile(){
+  const p=profile || {};
+  panel("My Profile",`
+    <div class="content-panel">
+      <div class="record"><small>Full Name</small><p>${esc(p.full_name || "Not provided")}</p></div>
+      <div class="record"><small>Username</small><p>${esc(p.username || "Not provided")}</p></div>
+      <div class="record"><small>Email</small><p>${esc(p.email || currentUser.email || "Not provided")}</p></div>
+      <div class="record"><small>Mobile</small><p>${esc(p.mobile || "Not provided")}</p></div>
+      <div class="record"><small>Referral Code</small><p>${esc(p.referral_code || "Not available")}</p></div>
+      <div class="record"><small>Account Balance</small><p>${money(p.balance)}</p></div>
+    </div>`);
+}
 
 async function logout(){
-
-if(!confirm("Are you sure you want to log out?")) return;
-
-const {error} = await supabaseClient.auth.signOut();
-
-if(error){
-alert(error.message);
-return;
+  if(!confirm("Are you sure you want to log out?")) return;
+  const {error}=await db.auth.signOut();
+  if(error){
+    alert("Could not log out: "+error.message);
+    return;
+  }
+  location.href="index.html";
 }
 
-window.location.replace("index.html");
-
-}
-
-// AUTHENTICATION LISTENER
-
-supabaseClient.auth.onAuthStateChange((event,session)=>{
-
-if(event==="SIGNED_OUT"){
-window.location.replace("index.html");
-}
-
-});
-
-// START
-
-loadDashboard();
-
+startDashboard();
 </script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  document.querySelectorAll("button, a").forEach(function(element) {
-
-    const text = element.textContent.trim().toLowerCase();
-
-    if (text === "deposit" || text === "deposit funds") {
-      element.onclick = function(event) {
-        event.preventDefault();
-        window.location.href = "deposit.html";
-      };
-
-      if (element.tagName === "A") {
-        element.href = "deposit.html";
-      }
-    }
-
-  });
-
-});
-</script><style>
-.hut8-referral-card{
-  background:white;
-  border:1px solid #DCEFFC;
-  border-radius:18px;
-  padding:22px;
-  margin:22px 0;
-  box-shadow:0 3px 12px rgba(0,130,190,.08);
-}
-.hut8-referral-card h3{
-  color:#168FCB;
-  margin-bottom:10px;
-  font-size:20px;
-}
-.hut8-referral-card p{
-  color:#607D96;
-  font-size:14px;
-  margin-bottom:15px;
-}
-.hut8-referral-code{
-  background:#EAF7FF;
-  color:#168FCB;
-  padding:15px;
-  border-radius:12px;
-  font-size:23px;
-  font-weight:bold;
-  text-align:center;
-  letter-spacing:3px;
-  margin-bottom:12px;
-}
-.hut8-referral-stats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin:15px 0;
-}
-.hut8-referral-stat{
-  background:#F3FAFF;
-  padding:15px;
-  border-radius:12px;
-  text-align:center;
-}
-.hut8-referral-stat strong{
-  display:block;
-  color:#168FCB;
-  font-size:22px;
-  margin-bottom:5px;
-}
-.hut8-referral-stat span{
-  color:#607D96;
-  font-size:12px;
-}
-.hut8-referral-card button{
-  width:100%;
-  padding:14px;
-  background:#279FD5;
-  border:0;
-  color:white;
-  border-radius:30px;
-  font-weight:bold;
-  font-size:15px;
-  margin-top:8px;
-  cursor:pointer;
-}
-</style>
-
-<script>
-async function loadHut8Referral(){
-
-try{
-
-const {data:sessionData} =
-await supabaseClient.auth.getSession();
-
-const session = sessionData.session;
-
-if(!session) return;
-
-const {data:profile,error:profileError} =
-await supabaseClient
-.from("hut8_profiles")
-.select("referral_code")
-.eq("id",session.user.id)
-.single();
-
-if(profileError) throw profileError;
-
-if(!profile.referral_code){
-throw new Error("Your referral code is not available yet.");
-}
-
-const code = profile.referral_code;
-
-// Referral link
-const referralURL = new URL(
-"index.html",
-window.location.href
-);
-
-referralURL.searchParams.set("ref",code);
-
-const link = referralURL.href;
-
-// Get referral statistics
-const {data:referrals,error:referralError} =
-await supabaseClient
-.from("hut8_referrals")
-.select("id,status")
-.eq("referrer_id",session.user.id);
-
-if(referralError) throw referralError;
-
-const total = referrals.length;
-
-const verified = referrals.filter(
-item => item.status === "verified" ||
-item.status === "rewarded"
-).length;
-
-// Create referral section
-const card = document.createElement("section");
-
-card.className = "hut8-referral-card";
-
-card.innerHTML = `
-<h3>My Referrals</h3>
-<p>Share your personal referral link with friends.</p>
-
-<div class="hut8-referral-code">
-${code}
-</div>
-
-<div class="hut8-referral-stats">
-<div class="hut8-referral-stat">
-<strong>${total}</strong>
-<span>Total Referrals</span>
-</div>
-
-<div class="hut8-referral-stat">
-<strong>${verified}</strong>
-<span>Verified Referrals</span>
-</div>
-</div>
-
-<button type="button" id="hut8CopyLink">
-Copy Referral Link
-</button>
-
-<button type="button" id="hut8ShareLink">
-Share Referral Link
-</button>
-`;
-
-const account = document.querySelector(".account");
-
-if(account){
-account.insertAdjacentElement("afterend",card);
-}
-
-// Copy link
-document.getElementById("hut8CopyLink")
-.addEventListener("click",async function(){
-
-try{
-await navigator.clipboard.writeText(link);
-alert("Referral link copied successfully!");
-}catch(error){
-prompt("Copy your referral link:",link);
-}
-
-});
-
-// Share link
-document.getElementById("hut8ShareLink")
-.addEventListener("click",async function(){
-
-if(navigator.share){
-
-try{
-await navigator.share({
-title:"Join HUT8 ADVANCED",
-text:"Join me on HUT8 ADVANCED using my referral link:",
-url:link
-});
-}catch(error){}
-
-}else{
-
-try{
-await navigator.clipboard.writeText(link);
-alert("Referral link copied. You can now share it!");
-}catch(error){
-prompt("Copy your referral link:",link);
-}
-
-}
-
-});
-
-}catch(error){
-
-console.error("Referral loading error:",error);
-
-}
-
-}
-
-loadHut8Referral();
-  </script><script>
-document.querySelectorAll("button").forEach(function(button){
-
-  if(button.textContent.trim().toLowerCase().includes("withdraw")){
-    button.onclick = function(){
-      window.location.href = "withdraw.html";
-    };
-  }
-
-});
-  </script>
-<script>
-(function () {
-  const pageLinks = {
-    "dashboard": "dashboard.html",
-    "deposit": "deposit.html",
-    "withdraw": "withdraw.html",
-    "investment plans": "plans.html",
-    "plans": "plans.html",
-    "my earnings": "earnings.html",
-    "earnings": "earnings.html",
-    "transactions": "transactions.html",
-    "referrals": "referrals.html"
-  };
-
-  document.querySelectorAll("button, a").forEach(function (item) {
-    const label = (item.innerText || item.textContent || "")
-      .trim().toLowerCase();
-
-    if (pageLinks[label]) {
-      item.addEventListener("click", function (event) {
-        event.preventDefault();
-        window.location.href = pageLinks[label];
-      });
-    }
-  });
-})();
-</script>
-</body>
-</html>
-
-<script>
-(function () {
-  const panel = document.createElement("div");
-  panel.id = "hut8RecordsPanel";
-  panel.style.cssText = `
-    display:none;position:fixed;inset:0;z-index:99999;
-    background:#f3f8fc;overflow-y:auto;padding:20px;
-    font-family:Arial,sans-serif;color:#16344b;
-  `;
-
-  panel.innerHTML = `
-    <div style="max-width:650px;margin:auto">
-      <button id="hut8CloseRecords" style="
-        background:#087fc1;color:white;border:0;
-        padding:12px 20px;border-radius:9px;font-weight:bold">
-        ← Back to Dashboard
-      </button>
-      <h2 id="hut8RecordsTitle" style="margin-top:24px">My Records</h2>
-      <div id="hut8RecordsContent">Loading...</div>
-    </div>
-  `;
-  document.body.appendChild(panel);
-
-  const title = panel.querySelector("#hut8RecordsTitle");
-  const content = panel.querySelector("#hut8RecordsContent");
-
-  panel.querySelector("#hut8CloseRecords").onclick = function () {
-    panel.style.display = "none";
-  };
-
-  function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, function (c) {
-      return {
-        "&":"&amp;","<":"&lt;",">":"&gt;",
-        '"':"&quot;","'":"&#39;"
-      }[c];
-    });
-  }
-
-  function money(value) {
-    return "UGX " + Number(value || 0).toLocaleString("en-UG");
-  }
-
-  function date(value) {
-    return value ? escapeHTML(new Date(value).toLocaleString()) : "—";
-  }
-
-  async function openRecords(section) {
-    panel.style.display = "block";
-    title.textContent = section;
-    content.innerHTML = "Loading your records...";
-
-    try {
-      const { data: sessionData, error: sessionError } =
-        await supabaseClient.auth.getSession();
-
-      if (sessionError) throw sessionError;
-
-      const user = sessionData.session?.user;
-      if (!user) throw new Error("Please log in again.");
-
-      let table, columns, orderColumn;
-
-      if (section === "My Earnings") {
-        table = "hut8_earnings";
-        columns = "amount,earning_date,description,status,created_at";
-        orderColumn = "earning_date";
-      } else if (section === "Transactions") {
-        table = "hut8_transactions";
-        columns = "transaction_type,direction,amount,reference,description,status,created_at";
-        orderColumn = "created_at";
-      } else {
-        table = "hut8_referrals";
-        columns = "referral_code,status,reward_amount,created_at,verified_at";
-        orderColumn = "created_at";
-      }
-
-      const { data, error } = await supabaseClient
-        .from(table)
-        .select(columns)
-        .eq("user_id", user.id)
-        .order(orderColumn, { ascending: false })
-        .limit(100);
-
-      // Referrals use referrer_id rather than user_id.
-      let rows = data || [];
-
-      if (section === "Referrals") {
-        const result = await supabaseClient
-          .from("hut8_referrals")
-          .select(columns)
-          .eq("referrer_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(100);
-
-        if (result.error) throw result.error;
-        rows = result.data || [];
-      } else if (error) {
-        throw error;
-      }
-
-      if (!rows.length) {
-        content.innerHTML =
-          '<p style="background:white;padding:18px;border-radius:12px">No records to display yet.</p>';
-        return;
-      }
-
-      content.innerHTML = rows.map(function (r) {
-        let details = "";
-
-        if (section === "My Earnings") {
-          details = `
-            <b>${money(r.amount)}</b>
-            <p>Date: ${date(r.earning_date)}</p>
-            <p>Status: ${escapeHTML(r.status)}</p>
-            <p>${escapeHTML(r.description || "")}</p>`;
-        } else if (section === "Transactions") {
-          details = `
-            <b>${money(r.amount)}</b>
-            <p>Type: ${escapeHTML(r.transaction_type)}</p>
-            <p>Direction: ${escapeHTML(r.direction)}</p>
-            <p>Status: ${escapeHTML(r.status)}</p>
-            <p>Reference: ${escapeHTML(r.reference || "—")}</p>
-            <p>Date: ${date(r.created_at)}</p>`;
-        } else {
-          details = `
-            <b>Referral</b>
-            <p>Code: ${escapeHTML(r.referral_code)}</p>
-            <p>Status: ${escapeHTML(r.status)}</p>
-            <p>Recorded reward: ${money(r.reward_amount)}</p>
-            <p>Date: ${date(r.created_at)}</p>`;
-        }
-
-        return `
-          <div style="background:white;padding:17px;border-radius:12px;
-            margin:12px 0;box-shadow:0 3px 12px #173b5610">
-            ${details}
-          </div>`;
-      }).join("");
-
-    } catch (err) {
-      content.innerHTML =
-        '<p style="color:#b42318;background:white;padding:15px;border-radius:10px">' +
-        escapeHTML(err.message || "Unable to load records.") +
-        '</p>';
-    }
-  }
-
-  document.addEventListener("click", function (event) {
-    const item = event.target.closest("button,a");
-    if (!item) return;
-
-    const label = (item.innerText || item.textContent || "")
-      .trim().toLowerCase();
-
-    let section = "";
-
-    if (label.includes("earning")) section = "My Earnings";
-    else if (label.includes("transaction")) section = "Transactions";
-    else if (label.includes("referral")) section = "Referrals";
-
-    if (section) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      openRecords(section);
-    }
-  }, true);
-})();
-</script>
-</body>
-</html>
-
-<script>
-(function () {
-  document.addEventListener("click", function (event) {
-    const button = event.target.closest("button, a, [onclick]");
-    if (!button) return;
-
-    const label = (button.innerText || button.textContent || "")
-      .trim().toLowerCase();
-
-    let destination = "";
-
-    if (label.includes("deposit")) {
-      destination = "deposit.html";
-    } 
-    else if (label.includes("withdraw")) {
-      destination = "withdraw.html";
-    } 
-    else if (
-      label.includes("investment plan") ||
-      label === "plans" ||
-      label.includes("explore plans")
-    ) {
-      destination = "plans.html";
-    }
-
-    if (destination) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      window.location.href = destination;
-    }
-  }, true);
-})();
-    </script>
-
-<script>
-(function () {
-  const style = document.createElement("style");
-  style.textContent = `
-    #hut8LivePanel {
-      display:none;position:fixed;inset:0;z-index:999999;
-      overflow-y:auto;background:#f3f8fc;padding:20px;
-      font-family:Arial,sans-serif;color:#16344b;
-    }
-    #hut8LivePanel .record {
-      background:white;padding:16px;margin:12px 0;
-      border-radius:13px;box-shadow:0 3px 12px #173b5610;
-      overflow-wrap:anywhere;
-    }
-    #hut8LivePanel button {
-      border:0;border-radius:9px;padding:12px 18px;
-      background:#087fc1;color:white;font-weight:bold;
-    }
-  `;
-  document.head.appendChild(style);
-
-  const panel = document.createElement("div");
-  panel.id = "hut8LivePanel";
-  panel.innerHTML = `
-    <div style="max-width:650px;margin:auto">
-      <button id="hut8LiveBack">← Back to Dashboard</button>
-      <h2 id="hut8LiveTitle">My Records</h2>
-      <div id="hut8LiveContent">Loading...</div>
-    </div>
-  `;
-  document.body.appendChild(panel);
-
-  const title = panel.querySelector("#hut8LiveTitle");
-  const content = panel.querySelector("#hut8LiveContent");
-
-  panel.querySelector("#hut8LiveBack").onclick = function () {
-    panel.style.display = "none";
-  };
-
-  function safe(value) {
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&":"&amp;","<":"&lt;",">":"&gt;",
-      '"':"&quot;","'":"&#39;"
-    }[c]));
-  }
-
-  function cash(value) {
-    return "UGX " + Number(value || 0).toLocaleString("en-UG");
-  }
-
-  function showError(error) {
-    content.innerHTML =
-      '<div class="record" style="color:#b42318">' +
-      safe(error.message || error) + '</div>';
-  }
-
-  async function loadSection(section) {
-    panel.style.display = "block";
-    title.textContent = section;
-    content.innerHTML = "Loading your records...";
-
-    try {
-      if (typeof supabaseClient === "undefined") {
-        throw new Error("Supabase connection was not found in dashboard.html.");
-      }
-
-      const {data: authData, error: authError} =
-        await supabaseClient.auth.getUser();
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Please log in again.");
-
-      const userId = authData.user.id;
-      let result;
-
-      if (section === "My Earnings") {
-        result = await supabaseClient
-          .from("hut8_earnings")
-          .select("amount,earning_date,description,status,created_at")
-          .eq("user_id", userId)
-          .order("earning_date", {ascending:false})
-          .limit(100);
-      }
-
-      if (section === "Transactions") {
-        result = await supabaseClient
-          .from("hut8_transactions")
-          .select("transaction_type,direction,amount,reference,description,status,created_at")
-          .eq("user_id", userId)
-          .order("created_at", {ascending:false})
-          .limit(100);
-      }
-
-      if (section === "Referrals") {
-        result = await supabaseClient
-          .from("hut8_referrals")
-          .select("referral_code,status,reward_amount,created_at,verified_at")
-          .or("referrer_id.eq." + userId + ",referred_user_id.eq." + userId)
-          .order("created_at", {ascending:false})
-          .limit(100);
-      }
-
-      if (result.error) throw result.error;
-
-      const rows = result.data || [];
-
-      if (!rows.length) {
-        content.innerHTML =
-          '<div class="record">No records available yet.</div>';
-        return;
-      }
-
-      content.innerHTML = rows.map(row => {
-        if (section === "My Earnings") {
-          return `<div class="record">
-            <h3>${cash(row.amount)}</h3>
-            <p>Date: ${safe(row.earning_date)}</p>
-            <p>Status: ${safe(row.status)}</p>
-            <p>${safe(row.description || "")}</p>
-          </div>`;
-        }
-
-        if (section === "Transactions") {
-          return `<div class="record">
-            <h3>${cash(row.amount)}</h3>
-            <p>Type: ${safe(row.transaction_type)}</p>
-            <p>Direction: ${safe(row.direction)}</p>
-            <p>Status: ${safe(row.status)}</p>
-            <p>Reference: ${safe(row.reference || "—")}</p>
-            <p>Date: ${safe(row.created_at)}</p>
-          </div>`;
-        }
-
-        return `<div class="record">
-          <h3>Referral record</h3>
-          <p>Referral code: ${safe(row.referral_code)}</p>
-          <p>Status: ${safe(row.status)}</p>
-          <p>Recorded reward: ${cash(row.reward_amount)}</p>
-          <p>Date: ${safe(row.created_at)}</p>
-        </div>`;
-      }).join("");
-
-    } catch (error) {
-      showError(error);
-    }
-  }
-
-  document.addEventListener("click", function (event) {
-    const item = event.target.closest(
-      "button,a,[role='button'],[onclick]"
-    );
-    if (!item) return;
-
-    const label = (item.innerText || item.textContent || "")
-      .trim().toLowerCase();
-
-    let section = "";
-    let destination = "";
-
-    if (label.includes("earning")) section = "My Earnings";
-    else if (label.includes("transaction")) section = "Transactions";
-    else if (label.includes("referral")) section = "Referrals";
-    else if (label.includes("deposit")) destination = "deposit.html";
-    else if (label.includes("withdraw")) destination = "withdraw.html";
-    else if (
-      label.includes("investment plan") ||
-      label.includes("explore plans") ||
-      label === "plans"
-    ) destination = "plans.html";
-
-    if (!section && !destination) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    if (section) loadSection(section);
-    if (destination) window.location.href = destination;
-
-  }, true);
-})();
-</script>
-</body>
-</html>
 </body>
   </html>
-
-<script>
-/* HUT8 ADVANCED — DASHBOARD FIX */
-(function () {
-  const SUPABASE_URL = "https://chjtxxwxhvjwpspmikme.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_g8m0qRrMveb8A7H3BLYYg_g21-SBKA";
-
-  let client = window.supabaseClient ||
-    (window.supabase && window.supabase.createClient
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-      : null);
-
-  if (!client) {
-    console.error("HUT8: Supabase client not found.");
-    return;
-  }
-
-  async function getUser() {
-    const { data, error } = await client.auth.getUser();
-    if (error || !data.user) {
-      alert("Please log in again.");
-      location.href = "index.html";
-      return null;
-    }
-    return data.user;
-  }
-
-  function money(value) {
-    return Number(value || 0).toLocaleString();
-  }
-
-  function safe(value) {
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;",
-      '"':"&quot;", "'":"&#39;"
-    }[c]));
-  }
-
-  function showPanel(title, content) {
-    let panel = document.getElementById("hut8FixPanel");
-    if (!panel) {
-      panel = document.createElement("div");
-      panel.id = "hut8FixPanel";
-      panel.style.cssText =
-        "position:fixed;inset:0;background:#f3faff;z-index:999999;overflow:auto;padding:22px;font-family:Arial";
-      document.body.appendChild(panel);
-    }
-
-    panel.innerHTML = `
-      <div style="max-width:650px;margin:auto">
-        <button id="hut8Back" style="padding:12px 20px;border:0;border-radius:9px;background:#279fd5;color:white;font-weight:bold">← Back</button>
-        <h2 style="color:#12345a;margin:22px 0">${safe(title)}</h2>
-        <div>${content}</div>
-      </div>`;
-
-    document.getElementById("hut8Back").onclick = () => panel.remove();
-  }
-
-  async function showRecords(section) {
-    const user = await getUser();
-    if (!user) return;
-
-    showPanel(section, "<p>Loading your records...</p>");
-    let table, query;
-
-    if (section === "My Earnings") {
-      table = "hut8_earnings";
-      query = client.from(table).select("*")
-        .eq("user_id", user.id).order("created_at", {ascending:false});
-    } else if (section === "Transactions") {
-      table = "hut8_transactions";
-      query = client.from(table).select("*")
-        .eq("user_id", user.id).order("created_at", {ascending:false});
-    } else if (section === "Referrals") {
-      table = "hut8_referrals";
-      query = client.from(table).select("*")
-        .eq("referrer_id", user.id).order("created_at", {ascending:false});
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      showPanel(section, `<p style="color:#b42318">Could not load records: ${safe(error.message)}</p>`);
-      return;
-    }
-
-    let html = "";
-
-    if (section === "Referrals") {
-      const { data: profile } = await client.from("hut8_profiles")
-        .select("referral_code").eq("id", user.id).maybeSingle();
-
-      const code = profile?.referral_code || "";
-      const link = new URL("index.html", location.href);
-      if (code) link.searchParams.set("ref", code);
-
-      html += `
-        <div style="background:white;padding:16px;border-radius:12px;margin-bottom:16px">
-          <b>Your referral link</b>
-          <p id="hut8ReferralLink" style="overflow-wrap:anywhere;margin:12px 0">${safe(link.href)}</p>
-          <button id="hut8CopyReferral" style="padding:12px;background:#279fd5;color:white;border:0;border-radius:8px">Copy link</button>
-          <button id="hut8ShareReferral" style="padding:12px;background:#12345a;color:white;border:0;border-radius:8px">Share link</button>
-        </div>`;
-
-      html += `<h3>Referral records</h3>`;
-      if (!data?.length) html += "<p>No referrals yet.</p>";
-
-      (data || []).forEach(r => {
-        html += `<div style="background:white;padding:14px;border-radius:10px;margin:10px 0">
-          <b>Status: ${safe(r.status)}</b>
-          <p>Reward: ${money(r.reward_amount)}</p>
-          <small>${safe(r.created_at || "")}</small>
-        </div>`;
-      });
-    } else {
-      if (!data?.length) html = "<p>No records found yet.</p>";
-
-      (data || []).forEach(r => {
-        const amount = money(r.amount);
-        const date = safe(r.earning_date || r.created_at || "");
-        html += `<div style="background:white;padding:14px;border-radius:10px;margin:10px 0">
-          <b>${amount}</b>
-          ${section === "Transactions" ? `<p>Type: ${safe(r.transaction_type)}</p><p>Direction: ${safe(r.direction)}</p>` : ""}
-          <p>Status: ${safe(r.status)}</p>
-          <small>${date}</small>
-          ${r.description ? `<p>${safe(r.description)}</p>` : ""}
-        </div>`;
-      });
-    }
-
-    showPanel(section, html);
-
-    if (section === "Referrals") {
-      const copyButton = document.getElementById("hut8CopyReferral");
-      const shareButton = document.getElementById("hut8ShareReferral");
-      const link = document.getElementById("hut8ReferralLink").textContent;
-
-      copyButton.onclick = async () => {
-        try {
-          if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(link);
-          } else {
-            const input = document.createElement("textarea");
-            input.value = link;
-            document.body.appendChild(input);
-            input.select();
-            if (!document.execCommand("copy")) throw new Error("Copy unavailable");
-            input.remove();
-          }
-          alert("Referral link copied.");
-        } catch {
-          prompt("Copy your referral link:", link);
-        }
-      };
-
-      shareButton.onclick = async () => {
-        if (navigator.share) {
-          try {
-            await navigator.share({title:"HUT8 ADVANCED", url:link});
-          } catch (e) {}
-        } else {
-          prompt("Copy and share your referral link:", link);
-        }
-      };
-    }
-  }
-
-  /* Replace the old placeholder navigation function */
-  window.openSection = function(section) {
-    const name = String(section || "").toLowerCase().trim();
-
-    if (name === "deposit") {
-      location.href = "deposit.html";
-    } else if (name === "withdraw") {
-      location.href = "withdraw.html";
-    } else if (name === "investment plans" || name === "plans") {
-      location.href = "plans.html";
-    } else if (name === "my earnings" || name === "earnings") {
-      showRecords("My Earnings");
-    } else if (name === "transactions" || name === "activity") {
-      showRecords("Transactions");
-    } else if (name === "referrals") {
-      showRecords("Referrals");
-    } else if (name === "home" || name === "dashboard") {
-      location.href = "dashboard.html";
-    } else {
-      alert("Section not recognised: " + section);
-    }
-  };
-
-  /* Correct navigation links without sending users to missing pages */
-  document.addEventListener("click", function(event) {
-    const el = event.target.closest("button, a");
-    if (!el) return;
-
-    const label = (el.innerText || el.textContent || "").trim().toLowerCase();
-
-    const routes = {
-      "deposit": "deposit.html",
-      "withdraw": "withdraw.html",
-      "investment plans": "plans.html",
-      "plans": "plans.html"
-    };
-
-    if (routes[label]) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      location.href = routes[label];
-    }
-  }, true);
-
-})();
-  </script>
-
-<script>
-(async function () {
-  const sb = window.supabaseClient || window.supabase;
-
-  if (!sb || !sb.auth) {
-    alert("Supabase connection not found.");
-    return;
-  }
-
-  // Read the existing login session
-  let { data: { session }, error } = await sb.auth.getSession();
-
-  if (error || !session) {
-    console.error("Session unavailable:", error);
-    alert("Your login session could not be read. Please refresh the dashboard.");
-    return;
-  }
-
-  const user = session.user;
-
-  // Find the Activity button
-  const buttons = document.querySelectorAll("button, a");
-
-  buttons.forEach(button => {
-    const label = (button.innerText || button.textContent || "")
-      .trim().toLowerCase();
-
-    if (label === "activity" || label === "transactions") {
-      button.onclick = async function (e) {
-        e.preventDefault();
-
-        const { data, error } = await sb
-          .from("hut8_transactions")
-          .select("transaction_type,direction,amount,reference,description,status,created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
-
-        let panel = document.getElementById("hut8ActivityFix");
-
-        if (!panel) {
-          panel = document.createElement("div");
-          panel.id = "hut8ActivityFix";
-          panel.style.cssText =
-            "position:fixed;inset:0;z-index:999999;background:#f3faff;overflow:auto;padding:20px;font-family:Arial";
-          document.body.appendChild(panel);
-        }
-
-        if (error) {
-          panel.innerHTML = `
-            <button onclick="this.parentElement.remove()">← Back</button>
-            <h2>My Transactions</h2>
-            <p>Could not load transactions: ${String(error.message)}</p>`;
-          return;
-        }
-
-        let html = `
-          <button onclick="this.parentElement.remove()"
-            style="padding:12px;background:#279fd5;color:white;border:0;border-radius:8px">
-            ← Back
-          </button>
-          <h2 style="color:#12345a;margin:20px 0">My Transactions</h2>`;
-
-        if (!data || data.length === 0) {
-          html += "<p>No transactions recorded yet.</p>";
-        } else {
-          data.forEach(row => {
-            html += `
-              <div style="background:white;padding:15px;border-radius:12px;margin:12px 0">
-                <h3>${Number(row.amount || 0).toLocaleString()}</h3>
-                <p>Type: ${row.transaction_type || "-"}</p>
-                <p>Direction: ${row.direction || "-"}</p>
-                <p>Status: ${row.status || "-"}</p>
-                <p>${row.description || ""}</p>
-                <small>${row.created_at ? new Date(row.created_at).toLocaleString() : ""}</small>
-              </div>`;
-          });
-        }
-
-        panel.innerHTML = html;
-      };
-    }
-  });
-})();
-  </script>
-
-<script>
-(function () {
-  function openWithdrawPage(event) {
-    if (event) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-    }
-    window.location.href = "withdraw.html";
-  }
-
-  document.querySelectorAll("button, a").forEach(function (element) {
-    const text = (element.innerText || element.textContent || "")
-      .trim().toLowerCase();
-
-    if (text === "withdraw" || text === "withdraw money") {
-      element.addEventListener("click", openWithdrawPage, true);
-      element.onclick = openWithdrawPage;
-      element.style.cursor = "pointer";
-    }
-  });
-
-  // Also correct dashboard navigation calls.
-  window.openSection = function (section) {
-    if (String(section).toLowerCase().includes("withdraw")) {
-      window.location.href = "withdraw.html";
-    }
-  };
-})();
-    </script>
-
-<script>
-document.querySelectorAll("button, a").forEach(function(element) {
-  const label = (element.innerText || element.textContent || "")
-    .trim().toLowerCase();
-
-  if (label === "activity" || label === "transactions") {
-    element.style.display = "none";
-  }
-});
-</script>
-
+  
