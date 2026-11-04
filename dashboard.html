@@ -9,303 +9,388 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f3faff;color:#12345a}
-button{cursor:pointer;font-family:inherit}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:235px;background:#279fd5;color:white;padding:25px 15px;position:fixed;inset:0 auto 0 0;overflow-y:auto}
-.logo{font-size:23px;font-weight:800;margin-bottom:8px}
-.sublogo{font-size:12px;margin-bottom:30px;opacity:.85}
-.nav button{display:block;width:100%;text-align:left;padding:14px;margin:5px 0;border:0;border-radius:9px;background:transparent;color:white;font-size:15px}
-.nav button:hover,.nav button.active{background:#ffffff30}
+body{font-family:Arial,sans-serif;background:#F3FAFF;color:#12345A}
+button,input{font:inherit}
+.app{display:flex;min-height:100vh}
+.sidebar{width:235px;background:#279FD5;color:white;padding:25px 15px;position:fixed;inset:0 auto 0 0;overflow-y:auto}
+.brand{font-size:22px;font-weight:800;margin:5px 10px 30px}
+.nav button{display:block;width:100%;border:0;background:transparent;color:white;text-align:left;padding:14px 13px;border-radius:9px;margin:5px 0;cursor:pointer;font-size:15px}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.2)}
 .main{margin-left:235px;width:calc(100% - 235px);padding:25px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
-.top h2{font-size:23px}
-.logout{background:#12345a;color:white;border:0;border-radius:8px;padding:11px 17px}
-.welcome{background:linear-gradient(120deg,#279fd5,#65c5ed);padding:25px;border-radius:17px;color:white;margin-bottom:20px}
-.welcome h2{font-size:23px;margin-bottom:8px}
-.welcome p{opacity:.9}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:22px}
-.card{background:white;padding:20px;border-radius:14px;box-shadow:0 3px 14px #12345a0c}
-.card small{color:#6c8298}
-.card h2{font-size:23px;margin-top:10px;color:#12345a;overflow-wrap:anywhere}
-.section-title{font-size:19px;margin:22px 0 13px}
-.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.action{background:white;border:1px solid #e2f0f8;padding:19px;border-radius:13px;text-align:left;color:#12345a}
-.action strong{display:block;font-size:16px;margin-bottom:7px}
-.action span{font-size:12px;color:#71869b}
-.action:hover{border-color:#279fd5}
-.content-panel{background:white;border-radius:14px;padding:18px;margin:15px 0;overflow-wrap:anywhere}
-.record{padding:15px;border:1px solid #e6f0f6;border-radius:11px;margin:12px 0}
-.record strong{font-size:17px}
-.record p{margin-top:7px;font-size:14px;color:#526b82}
-.status{display:inline-block;padding:5px 9px;border-radius:20px;background:#e8f5fc;font-size:12px;margin-top:8px}
-.back{background:#279fd5;color:white;border:0;padding:11px 17px;border-radius:8px;margin-bottom:15px}
-.copy{background:#279fd5;color:white;border:0;padding:12px 16px;border-radius:8px;margin:8px 5px 8px 0}
-.share{background:#12345a;color:white;border:0;padding:12px 16px;border-radius:8px}
-.empty{padding:22px;text-align:center;color:#71869b}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
+.topbar h1{font-size:24px}
+.small{color:#66819a;font-size:13px;margin-top:5px}
+.user-tag{background:white;border:1px solid #d9edf8;border-radius:20px;padding:10px 14px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:22px}
+.card,.panel{background:white;border:1px solid #dceef8;border-radius:14px;padding:20px;box-shadow:0 4px 15px rgba(24,91,130,.04)}
+.card p{font-size:13px;color:#66819a;margin-bottom:12px}
+.card h2{font-size:25px;overflow-wrap:anywhere}
+.section-title{font-size:19px;margin:25px 0 14px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.primary,.secondary,.danger{border:0;border-radius:9px;padding:12px 17px;cursor:pointer;font-weight:700}
+.primary{background:#279FD5;color:white}
+.secondary{background:#e7f5fc;color:#17658e}
+.danger{background:#fff0f0;color:#b42318}
+.panel{margin-bottom:18px}
+.panel h3{margin-bottom:15px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+.field input{width:100%;padding:12px;border:1px solid #cfe2ee;border-radius:8px;outline:none;background:#fff;color:#12345A}
+.field input:focus{border-color:#279FD5}
+.full{grid-column:1/-1}
+.notice{padding:12px;border-radius:8px;background:#edf8ff;color:#17658e;margin:12px 0;font-size:13px}
+.message{margin-top:12px;font-size:14px}
+.record{padding:13px 0;border-bottom:1px solid #edf2f6}
+.record:last-child{border-bottom:0}
+.record small{color:#66819a}
+.record p{margin-top:5px;overflow-wrap:anywhere}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #edf2f6;font-size:13px}
+th{color:#66819a;background:#f7fbfe}
+.empty{padding:22px;text-align:center;color:#66819a}
 .mobile-nav{display:none}
-.loading{text-align:center;padding:35px}
-.error{color:#b42318;padding:12px}
+.hidden{display:none!important}
 @media(max-width:800px){
  .sidebar{display:none}
  .main{margin-left:0;width:100%;padding:17px 14px 90px}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .card{padding:15px}
- .card h2{font-size:19px}
- .actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
- .action{padding:15px}
- .top h2{font-size:19px}
- .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;box-shadow:0 -3px 15px #12345a18;z-index:1000;justify-content:space-around;padding:9px 3px}
- .mobile-nav button{background:none;border:0;color:#12345a;font-size:11px;padding:6px 3px}
- .mobile-nav button span{display:block;font-size:18px;margin-bottom:3px}
+ .cards{grid-template-columns:1fr 1fr}
+ .topbar h1{font-size:20px}
+ .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #dceef8;justify-content:space-around;padding:8px 2px;z-index:10}
+ .mobile-nav button{border:0;background:transparent;color:#17658e;font-size:11px;padding:7px 4px}
+ .form-grid{grid-template-columns:1fr}
+ .full{grid-column:auto}
 }
+@media(max-width:400px){.cards{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
-<div id="app">
-  <div class="loading">Connecting to HUT8 ADVANCED...</div>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">HUT8 ADVANCED</div>
+  <nav class="nav">
+    <button class="active" onclick="openPage('home',this)">⌂ Home</button>
+    <button onclick="openPage('deposit',this)">＋ Deposit</button>
+    <button onclick="openPage('withdraw',this)">↗ Withdraw</button>
+    <button onclick="openPage('plans',this)">▣ Investment Plans</button>
+    <button onclick="openPage('earnings',this)">◷ My Earnings</button>
+    <button onclick="openPage('transactions',this)">▤ Transactions</button>
+    <button onclick="openPage('referrals',this)">♧ Referrals</button>
+    <button onclick="openPage('profile',this)">⚙ My Profile</button>
+    <button onclick="logout()">↪ Logout</button>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1 id="pageTitle">Dashboard</h1>
+      <p class="small" id="welcome">Welcome to your account</p>
+    </div>
+    <div class="user-tag" id="userTag">My Account</div>
+  </div>
+
+  <div id="content">
+    <div class="cards">
+      <div class="card"><p>Account Balance</p><h2 id="balanceValue">Loading...</h2></div>
+      <div class="card"><p>Total Deposited</p><h2 id="depositValue">Loading...</h2></div>
+      <div class="card"><p>Total Withdrawn</p><h2 id="withdrawValue">Loading...</h2></div>
+    </div>
+    <div class="panel">
+      <h3>Welcome to HUT8 ADVANCED</h3>
+      <p class="small">Manage your account, view your records and submit your requests.</p>
+      <div class="actions" style="margin-top:18px">
+        <button class="primary" onclick="openPage('deposit')">Make a Deposit</button>
+        <button class="secondary" onclick="openPage('plans')">View Plans</button>
+        <button class="secondary" onclick="openPage('withdraw')">Request Withdrawal</button>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div class="mobile-nav">
+  <button onclick="openPage('home')">⌂<br>Home</button>
+  <button onclick="openPage('deposit')">＋<br>Deposit</button>
+  <button onclick="openPage('withdraw')">↗<br>Withdraw</button>
+  <button onclick="openPage('plans')">▣<br>Plans</button>
+  <button onclick="openPage('profile')">⚙<br>Profile</button>
 </div>
 
 <script>
 const SUPABASE_URL = "https://chjtxxwxhvjwpspmikme.supabase.co";
-const SUPABASE_KEY = "sb_publishable_g8m0qRrMveb8A7H3BLYYg_g21-SBKA";
+const SUPABASE_KEY = "sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let currentUser = null;
 let profile = null;
 
-const app = document.getElementById("app");
+const content = document.getElementById("content");
 
 function money(value){
-  return Number(value || 0).toLocaleString();
+  return Number(value || 0).toLocaleString("en-US",{maximumFractionDigits:2});
 }
 
 function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+  return String(value ?? "").replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
 }
 
-function dateText(value){
-  if(!value) return "Date unavailable";
-  const d = new Date(value);
-  return isNaN(d) ? esc(value) : d.toLocaleString();
+function showMessage(id,message,isError=false){
+  const el=document.getElementById(id);
+  if(el){
+    el.textContent=message;
+    el.style.color=isError?"#b42318":"#16804a";
+  }
 }
 
 async function startDashboard(){
-  const {data,error} = await db.auth.getSession();
+  const {data,error}=await db.auth.getSession();
 
   if(error || !data.session){
-    app.innerHTML = `
-      <div class="loading">
-        <h2>Please log in</h2>
-        <p>Your HUT8 session is not active.</p>
-        <br><a href="index.html">Go to login</a>
-      </div>`;
+    window.location.href="index.html";
     return;
   }
 
-  currentUser = data.session.user;
-
+  currentUser=data.session.user;
   await loadProfile();
-  renderDashboard();
-  await refreshSummary();
+  await showHome();
 }
 
 async function loadProfile(){
-  const {data,error} = await db
+  const {data,error}=await db
     .from("hut8_profiles")
-    .select("id,full_name,username,mobile,email,balance,referral_code,referred_by")
+    .select("*")
     .eq("id",currentUser.id)
     .maybeSingle();
 
   if(error){
-    console.error("Profile error:",error.message);
+    console.error("Profile loading error:",error);
+    profile={};
+  }else{
+    profile=data || {};
   }
 
-  profile = data || {
-    id:currentUser.id,
-    full_name:currentUser.user_metadata?.full_name || "",
-    username:currentUser.user_metadata?.username || "",
-    email:currentUser.email || "",
-    balance:0
-  };
-}
+  profile.email=currentUser.email || profile.email || "";
 
-function renderDashboard(){
-  const name = profile.full_name || profile.username || currentUser.email;
+  document.getElementById("userTag").textContent=
+    profile.username || profile.full_name || "My Account";
 
-  app.innerHTML = `
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="logo">HUT8 ADVANCED</div>
-      <div class="sublogo">Your account dashboard</div>
-      <div class="nav">
-        <button class="active" data-page="home">⌂ &nbsp; Home</button>
-        <button data-page="deposit">＋ &nbsp; Deposit</button>
-        <button data-page="withdraw">↗ &nbsp; Withdraw</button>
-        <button data-page="plans">▦ &nbsp; Investment Plans</button>
-        <button data-page="earnings">◈ &nbsp; My Earnings</button>
-        <button data-page="transactions">▤ &nbsp; Transactions</button>
-        <button data-page="referrals">♧ &nbsp; Referrals</button>
-        <button data-page="profile">◎ &nbsp; My Profile</button>
-        <button data-page="logout">⇥ &nbsp; Logout</button>
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="top">
-        <h2>Dashboard</h2>
-        <button class="logout" data-page="logout">Logout</button>
-      </div>
-
-      <section id="pageContent">
-        <div class="welcome">
-          <h2>Welcome, ${esc(name)}</h2>
-          <p>Manage your HUT8 ADVANCED account.</p>
-        </div>
-
-        <div class="grid">
-          <div class="card">
-            <small>Account Balance</small>
-            <h2 id="balanceValue">Loading...</h2>
-          </div>
-          <div class="card">
-            <small>Total Deposited</small>
-            <h2 id="depositValue">Loading...</h2>
-          </div>
-          <div class="card">
-            <small>Total Withdrawn</small>
-            <h2 id="withdrawValue">Loading...</h2>
-          </div>
-          <div class="card">
-            <small>Recorded Earnings</small>
-            <h2 id="earningValue">Loading...</h2>
-          </div>
-          <div class="card">
-            <small>Account Name</small>
-            <h2 style="font-size:16px">${esc(name)}</h2>
-          </div>
-          <div class="card">
-            <small>Account Status</small>
-            <h2 style="font-size:17px">Registered</h2>
-          </div>
-        </div>
-
-        <h3 class="section-title">Your account services</h3>
-        <div class="actions">
-          <button class="action" data-page="deposit"><strong>＋ Deposit</strong><span>Submit a deposit request</span></button>
-          <button class="action" data-page="withdraw"><strong>↗ Withdraw</strong><span>Submit a withdrawal request</span></button>
-          <button class="action" data-page="plans"><strong>▦ Investment Plans</strong><span>Explore available plans</span></button>
-          <button class="action" data-page="earnings"><strong>◈ My Earnings</strong><span>View recorded earnings</span></button>
-          <button class="action" data-page="transactions"><strong>▤ Transactions</strong><span>View account transactions</span></button>
-          <button class="action" data-page="referrals"><strong>♧ Referrals</strong><span>View and share your referral link</span></button>
-          <button class="action" data-page="profile"><strong>◎ My Profile</strong><span>View your account information</span></button>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <nav class="mobile-nav">
-    <button data-page="home"><span>⌂</span>Home</button>
-    <button data-page="deposit"><span>＋</span>Deposit</button>
-    <button data-page="withdraw"><span>↗</span>Withdraw</button>
-    <button data-page="plans"><span>▦</span>Plans</button>
-    <button data-page="profile"><span>◎</span>Profile</button>
-  </nav>
-  </div>`;
-
-  document.querySelectorAll("[data-page]").forEach(button=>{
-    button.addEventListener("click",()=>{
-      openPage(button.dataset.page);
-    });
-  });
+  document.getElementById("welcome").textContent=
+    "Welcome, "+(profile.full_name || profile.username || "User");
 }
 
 async function refreshSummary(){
-  const balance = Number(profile.balance || 0);
+  const balance=profile?.balance || 0;
+  document.getElementById("balanceValue").textContent=money(balance);
 
-  const {data,error} = await db
+  const {data,error}=await db
     .from("hut8_transactions")
     .select("transaction_type,direction,amount,status")
     .eq("user_id",currentUser.id);
 
   if(error){
-    console.error("Summary transaction error:",error.message);
-    setText("balanceValue",money(balance));
-    setText("depositValue","—");
-    setText("withdrawValue","—");
-    setText("earningValue","—");
+    console.error("Summary error:",error);
+    document.getElementById("depositValue").textContent="—";
+    document.getElementById("withdrawValue").textContent="—";
     return;
   }
 
-  let deposits=0,withdrawals=0,earnings=0;
+  let deposits=0,withdrawals=0;
 
-  (data || []).forEach(row=>{
-    if(row.status !== "completed") return;
-    const amount = Number(row.amount || 0);
-    const type = String(row.transaction_type || "").toLowerCase();
+  (data || []).forEach(t=>{
+    if(t.status!=="completed") return;
+    const amount=Number(t.amount || 0);
 
-    if(type === "deposit" && row.direction === "credit") deposits += amount;
-    if(type === "withdrawal" && row.direction === "debit") withdrawals += amount;
-    if(type === "earning" && row.direction === "credit") earnings += amount;
+    if(t.transaction_type==="deposit" && t.direction==="credit"){
+      deposits+=amount;
+    }
+    if(t.transaction_type==="withdrawal" && t.direction==="debit"){
+      withdrawals+=amount;
+    }
   });
 
-  setText("balanceValue",money(balance));
-  setText("depositValue",money(deposits));
-  setText("withdrawValue",money(withdrawals));
-  setText("earningValue",money(earnings));
+  document.getElementById("depositValue").textContent=money(deposits);
+  document.getElementById("withdrawValue").textContent=money(withdrawals);
 }
 
-function setText(id,value){
-  const element=document.getElementById(id);
-  if(element) element.textContent=value;
-}
+async function showHome(){
+  document.getElementById("pageTitle").textContent="Dashboard";
 
-function openPage(page){
-  if(page==="home"){
-    location.href="dashboard.html";
-    return;
-  }
-  if(page==="deposit"){
-    location.href="deposit.html";
-    return;
-  }
-  if(page==="withdraw"){
-    location.href="withdraw.html";
-    return;
-  }
-  if(page==="plans"){
-    location.href="plans.html";
-    return;
-  }
-  if(page==="logout"){
-    logout();
-    return;
-  }
-  if(page==="earnings") showEarnings();
-  if(page==="transactions") showTransactions();
-  if(page==="referrals") showReferrals();
-  if(page==="profile") showProfile();
-}
-
-function panel(title,html){
-  const content=document.getElementById("pageContent");
   content.innerHTML=`
-    <button class="back" onclick="goHome()">← Back to Dashboard</button>
-    <h2 style="margin:10px 0 18px">${esc(title)}</h2>
-    ${html}`;
+    <div class="cards">
+      <div class="card"><p>Account Balance</p><h2 id="balanceValue">0</h2></div>
+      <div class="card"><p>Total Deposited</p><h2 id="depositValue">0</h2></div>
+      <div class="card"><p>Total Withdrawn</p><h2 id="withdrawValue">0</h2></div>
+    </div>
+    <div class="panel">
+      <h3>Welcome to HUT8 ADVANCED</h3>
+      <p class="small">Manage your account, view your records and submit your requests.</p>
+      <div class="actions" style="margin-top:18px">
+        <button class="primary" onclick="openPage('deposit')">Make a Deposit</button>
+        <button class="secondary" onclick="openPage('plans')">View Plans</button>
+        <button class="secondary" onclick="openPage('withdraw')">Request Withdrawal</button>
+      </div>
+    </div>`;
+
+  await refreshSummary();
 }
 
-function goHome(){
-  renderDashboard();
-  refreshSummary();
+function openPage(page,button){
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  if(button) button.classList.add("active");
+
+  if(page==="home"){showHome();return;}
+  if(page==="profile"){showProfile();return;}
+  if(page==="earnings"){showEarnings();return;}
+  if(page==="transactions"){showTransactions();return;}
+  if(page==="referrals"){showReferrals();return;}
+
+  const pages={
+    deposit:"deposit.html",
+    withdraw:"withdraw.html",
+    plans:"plans.html"
+  };
+
+  if(pages[page]){
+    window.location.href=pages[page];
+  }
+}
+
+function showProfile(){
+  document.getElementById("pageTitle").textContent="My Profile";
+
+  const p=profile || {};
+
+  content.innerHTML=`
+    <div class="panel">
+      <h3>Edit Your Profile</h3>
+      <p class="small">Update your personal account information below.</p>
+
+      <form id="profileForm" onsubmit="saveProfile(event)">
+        <div class="form-grid">
+          <div class="field">
+            <label>Full Name</label>
+            <input id="editFullName" type="text" maxlength="100"
+              value="${esc(p.full_name || "")}" required>
+          </div>
+
+          <div class="field">
+            <label>Username</label>
+            <input id="editUsername" type="text" maxlength="50"
+              value="${esc(p.username || "")}" required>
+          </div>
+
+          <div class="field">
+            <label>Mobile Number</label>
+            <input id="editMobile" type="tel" maxlength="30"
+              value="${esc(p.mobile || "")}" required>
+          </div>
+
+          <div class="field">
+            <label>Email Address</label>
+            <input id="editEmail" type="email" maxlength="254"
+              value="${esc(currentUser.email || "")}" required>
+          </div>
+
+          <div class="field full">
+            <label>New Password (leave blank to keep your current password)</label>
+            <input id="editPassword" type="password" minlength="6"
+              autocomplete="new-password" placeholder="Enter a new password">
+          </div>
+
+          <div class="full">
+            <button class="primary" id="saveProfileButton" type="submit">
+              Save Profile Changes
+            </button>
+            <p class="message" id="profileMessage"></p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>Account Information</h3>
+      <div class="record"><small>Account Balance</small><p>${money(p.balance)}</p></div>
+      <div class="record"><small>Referral Code</small><p>${esc(p.referral_code || "Not available")}</p></div>
+      <div class="notice">Your balance and referral code are protected account records and cannot be changed from this profile form.</div>
+    </div>`;
+}
+
+async function saveProfile(event){
+  event.preventDefault();
+
+  const button=document.getElementById("saveProfileButton");
+  button.disabled=true;
+  button.textContent="Saving...";
+
+  const full_name=document.getElementById("editFullName").value.trim();
+  const username=document.getElementById("editUsername").value.trim();
+  const mobile=document.getElementById("editMobile").value.trim();
+  const newEmail=document.getElementById("editEmail").value.trim();
+  const newPassword=document.getElementById("editPassword").value;
+
+  if(!full_name || !username || !mobile || !newEmail){
+    showMessage("profileMessage","Please complete all required fields.",true);
+    button.disabled=false;
+    button.textContent="Save Profile Changes";
+    return;
+  }
+
+  if(newPassword && newPassword.length<6){
+    showMessage("profileMessage","Password must be at least 6 characters.",true);
+    button.disabled=false;
+    button.textContent="Save Profile Changes";
+    return;
+  }
+
+  try{
+    const authChanges={};
+
+    if(newEmail!==currentUser.email) authChanges.email=newEmail;
+    if(newPassword) authChanges.password=newPassword;
+
+    if(Object.keys(authChanges).length){
+      const {data,error}=await db.auth.updateUser(authChanges);
+      if(error) throw error;
+      if(data?.user) currentUser=data.user;
+    }
+
+    const {error:profileError}=await db
+      .from("hut8_profiles")
+      .update({full_name,username,mobile})
+      .eq("id",currentUser.id);
+
+    if(profileError) throw profileError;
+
+    await loadProfile();
+    showProfile();
+
+    const msg=newEmail!==currentUser.email
+      ? "Profile saved. Check your email if Supabase requests email confirmation."
+      : "Your profile has been updated successfully.";
+
+    showMessage("profileMessage",msg);
+
+  }catch(error){
+    console.error("Profile update error:",error);
+    showMessage("profileMessage",error.message || "Could not update your profile.",true);
+  }finally{
+    const b=document.getElementById("saveProfileButton");
+    if(b){
+      b.disabled=false;
+      b.textContent="Save Profile Changes";
+    }
+  }
 }
 
 async function showEarnings(){
-  panel("My Earnings",'<div class="loading">Loading your earnings...</div>');
+  document.getElementById("pageTitle").textContent="My Earnings";
+  content.innerHTML=`<div class="panel"><h3>My Earnings</h3><p class="empty">Loading records...</p></div>`;
 
   const {data,error}=await db
     .from("hut8_earnings")
@@ -314,166 +399,130 @@ async function showEarnings(){
     .order("created_at",{ascending:false});
 
   if(error){
-    panel("My Earnings",`<p class="error">Unable to load earnings: ${esc(error.message)}</p>`);
+    content.innerHTML=`<div class="panel"><h3>My Earnings</h3><p class="empty">${esc(error.message)}</p></div>`;
     return;
   }
 
-  let html="";
-  if(!data?.length) html='<div class="empty">No earnings records found.</div>';
+  let rows=(data || []).map(item=>`
+    <tr>
+      <td>${esc(item.description || "Earning record")}</td>
+      <td>${money(item.amount)}</td>
+      <td>${esc(item.status || "—")}</td>
+      <td>${item.created_at ? new Date(item.created_at).toLocaleDateString() : "—"}</td>
+    </tr>`).join("");
 
-  (data || []).forEach(r=>{
-    html+=`
-      <div class="record">
-        <strong>${money(r.amount)}</strong>
-        <p>${esc(r.description || "Earnings record")}</p>
-        <p>Date: ${dateText(r.earning_date || r.created_at)}</p>
-        <span class="status">${esc(r.status)}</span>
-      </div>`;
-  });
-
-  panel("My Earnings",html);
+  content.innerHTML=`
+    <div class="panel">
+      <h3>My Earnings</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Description</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="4" class="empty">No earnings records found.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
 async function showTransactions(){
-  panel("Transactions",'<div class="loading">Loading your transactions...</div>');
+  document.getElementById("pageTitle").textContent="Transactions";
+  content.innerHTML=`<div class="panel"><h3>Transactions</h3><p class="empty">Loading records...</p></div>`;
 
   const {data,error}=await db
     .from("hut8_transactions")
-    .select("transaction_type,direction,amount,reference,description,status,created_at")
+    .select("*")
     .eq("user_id",currentUser.id)
     .order("created_at",{ascending:false});
 
   if(error){
-    panel("Transactions",`<p class="error">Unable to load transactions: ${esc(error.message)}</p>`);
+    content.innerHTML=`<div class="panel"><h3>Transactions</h3><p class="empty">${esc(error.message)}</p></div>`;
     return;
   }
 
-  let html="";
-  if(!data?.length) html='<div class="empty">No transactions recorded yet.</div>';
+  const rows=(data || []).map(t=>`
+    <tr>
+      <td>${esc(t.transaction_type || "—")}</td>
+      <td>${esc(t.direction || "—")}</td>
+      <td>${money(t.amount)}</td>
+      <td>${esc(t.status || "—")}</td>
+      <td>${t.created_at ? new Date(t.created_at).toLocaleDateString() : "—"}</td>
+    </tr>`).join("");
 
-  (data || []).forEach(r=>{
-    html+=`
-      <div class="record">
-        <strong>${money(r.amount)}</strong>
-        <p>Type: ${esc(r.transaction_type)}</p>
-        <p>Direction: ${esc(r.direction)}</p>
-        <p>Status: ${esc(r.status)}</p>
-        <p>Reference: ${esc(r.reference || "—")}</p>
-        <p>${esc(r.description || "")}</p>
-        <small>${dateText(r.created_at)}</small>
-      </div>`;
-  });
-
-  panel("Transactions",html);
+  content.innerHTML=`
+    <div class="panel">
+      <h3>Transaction History</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Direction</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="5" class="empty">No transactions found.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
 async function showReferrals(){
-  panel("Referrals",'<div class="loading">Loading your referrals...</div>');
-
-  const {data:refProfile,error:profileError}=await db
-    .from("hut8_profiles")
-    .select("referral_code")
-    .eq("id",currentUser.id)
-    .maybeSingle();
-
-  if(profileError){
-    panel("Referrals",`<p class="error">${esc(profileError.message)}</p>`);
-    return;
-  }
-
-  const code=refProfile?.referral_code || "";
-  const link=new URL("index.html",location.href);
-  if(code) link.searchParams.set("ref",code);
+  document.getElementById("pageTitle").textContent="Referrals";
+  content.innerHTML=`<div class="panel"><h3>My Referrals</h3><p class="empty">Loading records...</p></div>`;
 
   const {data,error}=await db
     .from("hut8_referrals")
-    .select("referral_code,status,reward_amount,created_at,verified_at")
+    .select("*")
     .eq("referrer_id",currentUser.id)
     .order("created_at",{ascending:false});
 
   if(error){
-    panel("Referrals",`<p class="error">Unable to load referrals: ${esc(error.message)}</p>`);
+    content.innerHTML=`<div class="panel"><h3>My Referrals</h3><p class="empty">${esc(error.message)}</p></div>`;
     return;
   }
 
-  let html=`
-    <div class="content-panel">
-      <h3>Your referral link</h3>
-      <p style="overflow-wrap:anywhere;margin:12px 0" id="referralLink">${esc(link.href)}</p>
-      <button class="copy" id="copyReferral">Copy Link</button>
-      <button class="share" id="shareReferral">Share Link</button>
-      ${!code ? '<p class="error">Your account does not have a referral code yet.</p>' : ''}
+  const code=profile?.referral_code || "";
+  const rows=(data || []).map(r=>`
+    <tr>
+      <td>${esc(r.referral_code || code || "—")}</td>
+      <td>${esc(r.status || "—")}</td>
+      <td>${money(r.reward_amount)}</td>
+      <td>${r.created_at ? new Date(r.created_at).toLocaleDateString() : "—"}</td>
+    </tr>`).join("");
+
+  content.innerHTML=`
+    <div class="panel">
+      <h3>Your Referral Code</h3>
+      <div class="record"><p>${esc(code || "No referral code available")}</p></div>
+      <button class="primary" style="margin-top:12px" onclick="copyReferralCode()">Copy Referral Code</button>
+      <p class="message" id="referralMessage"></p>
     </div>
-    <h3 class="section-title">Referral Records</h3>`;
-
-  if(!data?.length) html+='<div class="empty">No referrals recorded yet.</div>';
-
-  (data || []).forEach(r=>{
-    html+=`
-      <div class="record">
-        <strong>Reward: ${money(r.reward_amount)}</strong>
-        <p>Code: ${esc(r.referral_code)}</p>
-        <p>Status: ${esc(r.status)}</p>
-        <small>${dateText(r.created_at)}</small>
-      </div>`;
-  });
-
-  panel("Referrals",html);
-
-  document.getElementById("copyReferral").onclick=async()=>{
-    try{
-      if(navigator.clipboard && window.isSecureContext){
-        await navigator.clipboard.writeText(link.href);
-      }else{
-        const input=document.createElement("textarea");
-        input.value=link.href;
-        document.body.appendChild(input);
-        input.select();
-        const copied=document.execCommand("copy");
-        input.remove();
-        if(!copied) throw new Error("Copy unavailable");
-      }
-      alert("Referral link copied.");
-    }catch(e){
-      prompt("Copy your referral link:",link.href);
-    }
-  };
-
-  document.getElementById("shareReferral").onclick=async()=>{
-    if(navigator.share){
-      try{await navigator.share({title:"HUT8 ADVANCED",url:link.href});}
-      catch(e){}
-    }else{
-      prompt("Copy your referral link:",link.href);
-    }
-  };
+    <div class="panel">
+      <h3>Referral Records</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Status</th><th>Reward</th><th>Date</th></tr></thead>
+          <tbody>${rows || `<tr><td colspan="4" class="empty">No referral records found.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
-function showProfile(){
-  const p=profile || {};
-  panel("My Profile",`
-    <div class="content-panel">
-      <div class="record"><small>Full Name</small><p>${esc(p.full_name || "Not provided")}</p></div>
-      <div class="record"><small>Username</small><p>${esc(p.username || "Not provided")}</p></div>
-      <div class="record"><small>Email</small><p>${esc(p.email || currentUser.email || "Not provided")}</p></div>
-      <div class="record"><small>Mobile</small><p>${esc(p.mobile || "Not provided")}</p></div>
-      <div class="record"><small>Referral Code</small><p>${esc(p.referral_code || "Not available")}</p></div>
-      <div class="record"><small>Account Balance</small><p>${money(p.balance)}</p></div>
-    </div>`);
+async function copyReferralCode(){
+  const code=profile?.referral_code || "";
+  if(!code){
+    showMessage("referralMessage","No referral code is available.",true);
+    return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(code);
+    showMessage("referralMessage","Referral code copied.");
+  }catch(e){
+    showMessage("referralMessage","Copy is unavailable on this browser. Please copy: "+code,true);
+  }
 }
 
 async function logout(){
-  if(!confirm("Are you sure you want to log out?")) return;
-  const {error}=await db.auth.signOut();
-  if(error){
-    alert("Could not log out: "+error.message);
-    return;
-  }
-  location.href="index.html";
+  await db.auth.signOut();
+  window.location.href="index.html";
 }
 
 startDashboard();
 </script>
 </body>
-  </html>
-  
+ </html>
+       
