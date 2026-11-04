@@ -686,7 +686,57 @@ function selectPlan(name,amount,days){
 }
 </script>
 
-</body>
+<script>
+const HUT8_PLAN_URL = "https://chjtxxwxhvjwpspmikme.supabase.co";
+const HUT8_PLAN_KEY = "sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+
+const hut8PlanClient = window.supabase.createClient(
+  HUT8_PLAN_URL,
+  HUT8_PLAN_KEY
+);
+
+window.selectPlan = async function(name, amount, days) {
+  try {
+    const { data: sessionData, error: sessionError } =
+      await hut8PlanClient.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const user = sessionData.session?.user;
+
+    if (!user) {
+      alert("Please log in before applying for a plan.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    const planName = String(name).trim();
+    const planCode = planName.match(/[JK]-\d+/i)?.[0] || planName;
+    const series = /^J/i.test(planCode) ? "J Series" : "K Series";
+
+    const { error } = await hut8PlanClient
+      .from("hut8_plan_enrollments")
+      .insert({
+        user_id: user.id,
+        plan_code: planCode,
+        plan_name: planName,
+        series: series,
+        amount: Number(amount),
+        duration_days: Number(days),
+        status: "pending"
+      });
+
+    if (error) throw error;
+
+    alert("Your " + planName +
+      " application has been submitted. It will appear in Active Plans after you review and activate it.");
+
+  } catch (error) {
+    console.error("Plan application error:", error);
+    alert("Could not submit your plan: " + error.message);
+  }
+};
+</script></body>
  </html>
  
 
