@@ -1577,4 +1577,89 @@ document.querySelectorAll("button").forEach(function(button){
 
 })();
   </script>
-  
+
+<script>
+(async function () {
+  const sb = window.supabaseClient || window.supabase;
+
+  if (!sb || !sb.auth) {
+    alert("Supabase connection not found.");
+    return;
+  }
+
+  // Read the existing login session
+  let { data: { session }, error } = await sb.auth.getSession();
+
+  if (error || !session) {
+    console.error("Session unavailable:", error);
+    alert("Your login session could not be read. Please refresh the dashboard.");
+    return;
+  }
+
+  const user = session.user;
+
+  // Find the Activity button
+  const buttons = document.querySelectorAll("button, a");
+
+  buttons.forEach(button => {
+    const label = (button.innerText || button.textContent || "")
+      .trim().toLowerCase();
+
+    if (label === "activity" || label === "transactions") {
+      button.onclick = async function (e) {
+        e.preventDefault();
+
+        const { data, error } = await sb
+          .from("hut8_transactions")
+          .select("transaction_type,direction,amount,reference,description,status,created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        let panel = document.getElementById("hut8ActivityFix");
+
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.id = "hut8ActivityFix";
+          panel.style.cssText =
+            "position:fixed;inset:0;z-index:999999;background:#f3faff;overflow:auto;padding:20px;font-family:Arial";
+          document.body.appendChild(panel);
+        }
+
+        if (error) {
+          panel.innerHTML = `
+            <button onclick="this.parentElement.remove()">← Back</button>
+            <h2>My Transactions</h2>
+            <p>Could not load transactions: ${String(error.message)}</p>`;
+          return;
+        }
+
+        let html = `
+          <button onclick="this.parentElement.remove()"
+            style="padding:12px;background:#279fd5;color:white;border:0;border-radius:8px">
+            ← Back
+          </button>
+          <h2 style="color:#12345a;margin:20px 0">My Transactions</h2>`;
+
+        if (!data || data.length === 0) {
+          html += "<p>No transactions recorded yet.</p>";
+        } else {
+          data.forEach(row => {
+            html += `
+              <div style="background:white;padding:15px;border-radius:12px;margin:12px 0">
+                <h3>${Number(row.amount || 0).toLocaleString()}</h3>
+                <p>Type: ${row.transaction_type || "-"}</p>
+                <p>Direction: ${row.direction || "-"}</p>
+                <p>Status: ${row.status || "-"}</p>
+                <p>${row.description || ""}</p>
+                <small>${row.created_at ? new Date(row.created_at).toLocaleString() : ""}</small>
+              </div>`;
+          });
+        }
+
+        panel.innerHTML = html;
+      };
+    }
+  });
+})();
+  </script>
+
