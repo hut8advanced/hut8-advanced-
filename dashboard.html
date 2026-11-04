@@ -1663,3 +1663,33 @@ document.querySelectorAll("button").forEach(function(button){
 })();
   </script>
 
+<script>
+(function () {
+  function openWithdrawPage(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+    window.location.href = "withdraw.html";
+  }
+
+  document.querySelectorAll("button, a").forEach(function (element) {
+    const text = (element.innerText || element.textContent || "")
+      .trim().toLowerCase();
+
+    if (text === "withdraw" || text === "withdraw money") {
+      element.addEventListener("click", openWithdrawPage, true);
+      element.onclick = openWithdrawPage;
+      element.style.cursor = "pointer";
+    }
+  });
+
+  // Also correct dashboard navigation calls.
+  window.openSection = function (section) {
+    if (String(section).toLowerCase().includes("withdraw")) {
+      window.location.href = "withdraw.html";
+    }
+  };
+})();
+    </script>
+
