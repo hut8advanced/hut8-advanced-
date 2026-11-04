@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUT8 ADVANCED - Withdraw</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:20px;background:#F3FAFF;color:#12345A;font-family:Arial,sans-serif}
+.container{max-width:520px;margin:35px auto;background:white;padding:25px;border-radius:15px;border:1px solid #dceef8}
+h2{margin-top:0}
+.subtitle{color:#66819a;font-size:14px;line-height:1.5}
+label{display:block;font-weight:bold;font-size:14px;margin:17px 0 7px}
+input,select{width:100%;padding:13px;border:1px solid #cfe2ee;border-radius:8px;font-size:15px;background:white}
+button{width:100%;padding:14px;background:#279FD5;color:white;border:0;border-radius:8px;font-weight:bold;margin-top:20px;font-size:15px}
+button:disabled{opacity:.6}
+.back{display:block;text-align:center;margin-top:18px;color:#17658e;text-decoration:none}
+#message{margin-top:15px;font-size:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Withdrawal Request</h2>
+<p class="subtitle">Enter your withdrawal amount and mobile money details. Your request will be submitted for review.</p>
+
+<form id="withdrawForm">
+<label>Withdrawal Amount</label>
+<input type="number" id="amount" min="5000" step="1" placeholder="Minimum 5,000" required>
+
+<label>Mobile Money Provider</label>
+<select id="method" required>
+<option value="">Select provider</option>
+<option value="MTN">MTN Mobile Money</option>
+<option value="Airtel">Airtel Money</option>
+</select>
+
+<label>Mobile Money Account Name</label>
+<input type="text" id="accountName" required placeholder="Enter account name">
+
+<label>Mobile Money Number</label>
+<input type="tel" id="accountNumber" required placeholder="Enter mobile money number">
+
+<button type="submit" id="submitButton">Submit Withdrawal Request</button>
+<p id="message"></p>
+</form>
+
+<a class="back" href="dashboard.html">← Back to Dashboard</a>
+</div>
+
+<script>
+const SUPABASE_URL="https://chjtxxwxhvjwpspmikme.supabase.co";
+const SUPABASE_KEY="sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let user=null;
+
+async function checkLogin(){
+  const {data,error}=await db.auth.getSession();
+  if(error || !data.session){
+    window.location.href="index.html";
+    return;
+  }
+  user=data.session.user;
+}
+
+checkLogin();
+
+document.getElementById("withdrawForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+
+  const message=document.getElementById("message");
+  const button=document.getElementById("submitButton");
+
+  const amount=Number(document.getElementById("amount").value);
+  const method=document.getElementById("method").value;
+  const accountName=document.getElementById("accountName").value.trim();
+  const accountNumber=document.getElementById("accountNumber").value.trim();
+
+  if(!user){
+    message.style.color="#b42318";
+    message.textContent="Please log in again.";
+    return;
+  }
+
+  if(!Number.isFinite(amount) || amount<5000){
+    message.style.color="#b42318";
+    message.textContent="The minimum withdrawal request is 5,000.";
+    return;
+  }
+
+  if(!method || !accountName || !accountNumber){
+    message.style.color="#b42318";
+    message.textContent="Please complete all the fields.";
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Submitting...";
+
+  const {error}=await db.from("hut8_withdrawals").insert([{
+    user_id:user.id,
+    amount:amount,
+    payment_method:method,
+    account_name:accountName,
+    account_number:accountNumber,
+    status:"pending"
+  }]);
+
+  if(error){
+    message.style.color="#b42318";
+    message.textContent="Could not submit request: "+error.message;
+    button.disabled=false;
+    button.textContent="Submit Withdrawal Request";
+    return;
+  }
+
+  message.style.color="#16804a";
+  message.textContent="Your withdrawal request has been submitted successfully and is awaiting review.";
+
+  document.getElementById("withdrawForm").reset();
+  button.disabled=false;
+  button.textContent="Submit Withdrawal Request";
+});
+</script>
+</body>
+  </html>
+  
