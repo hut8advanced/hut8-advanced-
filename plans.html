@@ -4,46 +4,314 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HUT8 ADVANCED | Investment Plans</title>
+<title>HUT8 ADVANCED | Machine Plans</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
  margin:0;
  font-family:Arial,sans-serif;
  background:#f3f8fc;
  color:#16344b;
 }
+
 header{
- background:#087fc1;
+ background:linear-gradient(120deg,#087fc1,#32a9e5);
  color:white;
  padding:22px 18px;
 }
-header h2{margin:0;font-size:22px}
+
+header h2{margin:0;font-size:23px}
 header p{margin:7px 0 0;font-size:13px}
-.container{padding:20px;max-width:750px;margin:auto}
-.intro{margin-bottom:20px}
-.intro h2{margin-bottom:7px}
-.intro p{color:#668096;font-size:14px;line-height:1.5}
+
+.container{
+ max-width:850px;
+ margin:auto;
+ padding:18px 14px;
+}
+
+.intro h2{margin:5px 0}
+.intro p{
+ color:#668096;
+ font-size:14px;
+ line-height:1.5;
+}
+
+.series-nav{
+ display:flex;
+ gap:10px;
+ margin:20px 0 14px;
+}
+
+.series-nav button{
+ flex:1;
+ margin:0;
+ background:#dceefa;
+ color:#087fc1;
+ border:1px solid #c5e2f4;
+}
+
+.series-nav button.active{
+ background:#087fc1;
+ color:white;
+}
+
+.slider{
+ display:flex;
+ overflow-x:auto;
+ scroll-snap-type:x mandatory;
+ scroll-behavior:smooth;
+ gap:14px;
+ scrollbar-width:none;
+}
+
+.slider::-webkit-scrollbar{display:none}
+
+.series{
+ flex:0 0 100%;
+ min-width:100%;
+ scroll-snap-align:start;
+}
+
+.series-heading{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin:10px 2px 16px;
+}
+
+.series-heading h2{
+ margin:0;
+ color:#087fc1;
+}
+
+.series-heading span{
+ font-size:12px;
+ color:#668096;
+}
+
 .plan{
  background:white;
- border-radius:17px;
- padding:18px;
- margin-bottom:18px;
- box-shadow:0 4px 18px #173b5610;
- border:1px solid #e1edf5;
+ border-radius:19px;
+ padding:17px;
+ margin-bottom:17px;
+ box-shadow:0 5px 20px #173b5612;
+ border:1px solid #dfedf6;
+ overflow:hidden;
 }
+
 .machine{
- height:145px;
- border-radius:13px;
- background:linear-gradient(135deg,#d9f0ff,#8acdf2);
+ height:190px;
+ border-radius:15px;
+ background:
+ radial-gradient(ellipse at 50% 90%,#83b9d6 0%,transparent 55%),
+ linear-gradient(145deg,#e8f7ff,#a9d8f2);
  display:flex;
- align-items:center;
  justify-content:center;
- margin-bottom:15px;
+ align-items:center;
+ margin-bottom:17px;
+ perspective:700px;
+ overflow:hidden;
+ position:relative;
 }
-.machine span{font-size:67px}
-.plan h3{margin:5px 0;color:#087fc1;font-size:21px}
-.price{font-size:24px;font-weight:bold;margin:12px 0}
+
+.machine:after{
+ content:"";
+ position:absolute;
+ width:170px;
+ height:15px;
+ bottom:15px;
+ border-radius:50%;
+ background:#356e9130;
+ filter:blur(5px);
+}
+
+.machine-body{
+ position:relative;
+ width:112px;
+ height:132px;
+ border-radius:13px 13px 8px 8px;
+ background:linear-gradient(110deg,#f9fdff 0%,#b9d2e1 25%,#edf8ff 55%,#789bb2 100%);
+ border:2px solid #779db5;
+ box-shadow:
+ 12px 10px 0 #567d96,
+ 17px 15px 15px #31566a45,
+ inset 4px 0 7px white;
+ transform:rotateY(-13deg) rotateX(3deg);
+ z-index:1;
+}
+
+.machine-body:before{
+ content:"";
+ position:absolute;
+ top:-12px;
+ left:8px;
+ width:91px;
+ height:13px;
+ background:linear-gradient(#f9ffff,#8faec0);
+ border:1px solid #7899ac;
+ border-radius:6px 6px 2px 2px;
+}
+
+.machine-body:after{
+ content:"";
+ position:absolute;
+ bottom:-12px;
+ left:10px;
+ width:85px;
+ height:12px;
+ background:linear-gradient(#7e9daf,#d7eaf4);
+ border-radius:2px 2px 6px 6px;
+}
+
+.machine-screen{
+ position:absolute;
+ top:17px;
+ left:18px;
+ width:72px;
+ height:35px;
+ border-radius:5px;
+ background:linear-gradient(135deg,#063c62,#0b83bd);
+ border:3px solid #6c8da2;
+ box-shadow:inset 0 0 9px #36b7ff;
+}
+
+.machine-screen:after{
+ content:"HUT8";
+ color:#a7e7ff;
+ font-size:10px;
+ font-weight:bold;
+ position:absolute;
+ top:9px;
+ left:19px;
+ letter-spacing:1px;
+}
+
+.machine-panel{
+ position:absolute;
+ top:64px;
+ left:19px;
+ width:70px;
+ height:45px;
+ background:linear-gradient(135deg,#d9e9f2,#9bb9ca);
+ border:1px solid #7796a9;
+ border-radius:5px;
+}
+
+.machine-panel:before{
+ content:"";
+ position:absolute;
+ top:8px;
+ left:8px;
+ width:50px;
+ height:4px;
+ background:#6e91a5;
+ box-shadow:0 9px 0 #6e91a5,0 18px 0 #6e91a5;
+}
+
+.machine-light{
+ position:absolute;
+ bottom:8px;
+ left:42px;
+ width:8px;
+ height:8px;
+ border-radius:50%;
+ background:#25b6ef;
+ box-shadow:0 0 9px #20bfff;
+}
+
+.machine-2 .machine-body{
+ width:130px;
+ height:116px;
+ border-radius:10px;
+}
+
+.machine-2 .machine-screen{
+ width:88px;
+ left:20px;
+}
+
+.machine-3 .machine-body{
+ width:95px;
+ height:150px;
+}
+
+.machine-4 .machine-body{
+ width:145px;
+ height:112px;
+}
+
+.machine-4 .machine-screen{
+ width:98px;
+ left:23px;
+}
+
+.machine-5 .machine-body{
+ width:120px;
+ height:145px;
+ border-radius:18px 18px 7px 7px;
+}
+
+.machine-6 .machine-body{
+ width:145px;
+ height:145px;
+ border-radius:8px;
+}
+
+.machine-7 .machine-body{
+ width:100px;
+ height:140px;
+ border-radius:18px 18px 5px 5px;
+}
+
+.machine-8 .machine-body{
+ width:140px;
+ height:125px;
+}
+
+.machine-9 .machine-body{
+ width:115px;
+ height:155px;
+}
+
+.machine-10 .machine-body{
+ width:150px;
+ height:115px;
+}
+
+.machine-11 .machine-body{
+ width:125px;
+ height:150px;
+ border-radius:8px;
+}
+
+.machine-label{
+ position:absolute;
+ top:10px;
+ left:12px;
+ background:#087fc1;
+ color:white;
+ padding:6px 10px;
+ border-radius:7px;
+ font-size:11px;
+ font-weight:bold;
+ z-index:3;
+}
+
+.plan h3{
+ margin:5px 0;
+ color:#087fc1;
+ font-size:21px;
+}
+
+.price{
+ font-size:25px;
+ font-weight:bold;
+ margin:12px 0;
+ color:#173c58;
+}
+
 .details{
  display:flex;
  justify-content:space-between;
@@ -52,20 +320,43 @@ header p{margin:7px 0 0;font-size:13px}
  border-top:1px solid #edf2f6;
  font-size:13px;
 }
+
 .details strong{color:#173c58}
+
+.cycle-figure{
+ margin-top:12px;
+ padding:13px;
+ border-radius:11px;
+ background:#edf7fd;
+}
+
+.cycle-figure small{
+ display:block;
+ color:#52728a;
+ font-size:11px;
+ margin-bottom:5px;
+}
+
+.cycle-figure strong{
+ font-size:21px;
+ color:#087fc1;
+}
+
 .note{
- background:#eef7fc;
+ background:#f2f7fa;
  border-radius:10px;
  padding:12px;
- font-size:12px;
+ font-size:11px;
  line-height:1.5;
  color:#526d80;
  margin-top:12px;
 }
+
 button{
+ cursor:pointer;
  width:100%;
  border:0;
- border-radius:10px;
+ border-radius:11px;
  padding:14px;
  background:#087fc1;
  color:white;
@@ -73,94 +364,331 @@ button{
  font-weight:bold;
  margin-top:14px;
 }
+
 button:active{opacity:.8}
+
 .back{
  display:block;
  text-align:center;
  color:#087fc1;
  text-decoration:none;
- margin:22px 0;
+ margin:25px 0;
  font-weight:bold;
+}
+
+@media(min-width:650px){
+ .plan{padding:22px}
+ .machine{height:210px}
 }
 </style>
 </head>
+
 <body>
 
 <header>
  <h2>HUT8 ADVANCED</h2>
- <p>Investment Plans</p>
+ <p>Investment Machine Plans</p>
 </header>
 
 <main class="container">
+
  <div class="intro">
   <h2>Choose Your Machine</h2>
-  <p>Explore the available machine plans, investment amounts and lock periods.</p>
+  <p>Explore the available machines and their cycle durations. Swipe horizontally to view the other series.</p>
  </div>
 
- <section class="plan">
-  <div class="machine"><span>⚙️</span></div>
-  <h3>J-1 MACHINE</h3>
-  <div class="price">UGX 70,000</div>
-  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
-  <div class="details"><span>Plan reference</span><strong>J-1</strong></div>
-  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
-  <button onclick="selectPlan('J-1',70000,30)">Select J-1</button>
+ <div class="series-nav">
+  <button id="jTab" class="active" onclick="goSeries(0)">J SERIES</button>
+  <button id="kTab" onclick="goSeries(1)">K SERIES →</button>
+ </div>
+
+ <div class="slider" id="seriesSlider">
+
+ <!-- J SERIES -->
+ <section class="series">
+
+  <div class="series-heading">
+   <h2>J SERIES</h2>
+   <span>5 Machines</span>
+  </div>
+
+  <section class="plan">
+   <div class="machine machine-1">
+    <span class="machine-label">J-1</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>J-1 MACHINE</h3>
+   <div class="price">UGX 70,000</div>
+   <div class="details"><span>Cycle duration</span><strong>30 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>J-1</strong></div>
+   <div class="note">Any returns are subject to the actual business performance, available funds and disclosed plan terms. Returns are not guaranteed.</div>
+   <button onclick="selectPlan('J-1',70000,30)">Select J-1</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-2">
+    <span class="machine-label">J-2</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>J-2 MACHINE</h3>
+   <div class="price">UGX 210,000</div>
+   <div class="details"><span>Cycle duration</span><strong>30 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>J-2</strong></div>
+   <div class="note">Any returns are subject to the actual business performance, available funds and disclosed plan terms. Returns are not guaranteed.</div>
+   <button onclick="selectPlan('J-2',210000,30)">Select J-2</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-3">
+    <span class="machine-label">J-3</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>J-3 MACHINE</h3>
+   <div class="price">UGX 500,000</div>
+   <div class="details"><span>Cycle duration</span><strong>30 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>J-3</strong></div>
+   <div class="note">Any returns are subject to the actual business performance, available funds and disclosed plan terms. Returns are not guaranteed.</div>
+   <button onclick="selectPlan('J-3',500000,30)">Select J-3</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-4">
+    <span class="machine-label">J-4</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>J-4 MACHINE</h3>
+   <div class="price">UGX 1,250,000</div>
+   <div class="details"><span>Cycle duration</span><strong>25 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>J-4</strong></div>
+   <div class="note">Any returns are subject to the actual business performance, available funds and disclosed plan terms. Returns are not guaranteed.</div>
+   <button onclick="selectPlan('J-4',1250000,25)">Select J-4</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-5">
+    <span class="machine-label">J-5</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>J-5 MACHINE</h3>
+   <div class="price">UGX 2,500,000</div>
+   <div class="details"><span>Cycle duration</span><strong>25 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>J-5</strong></div>
+   <div class="note">Any returns are subject to the actual business performance, available funds and disclosed plan terms. Returns are not guaranteed.</div>
+   <button onclick="selectPlan('J-5',2500000,25)">Select J-5</button>
+  </section>
+
  </section>
 
- <section class="plan">
-  <div class="machine"><span>🏭</span></div>
-  <h3>J-2 MACHINE</h3>
-  <div class="price">UGX 210,000</div>
-  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
-  <div class="details"><span>Plan reference</span><strong>J-2</strong></div>
-  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
-  <button onclick="selectPlan('J-2',210000,30)">Select J-2</button>
- </section>
+ <!-- K SERIES -->
+ <section class="series">
 
- <section class="plan">
-  <div class="machine"><span>🏗️</span></div>
-  <h3>J-3 MACHINE</h3>
-  <div class="price">UGX 500,000</div>
-  <div class="details"><span>Lock duration</span><strong>30 Days</strong></div>
-  <div class="details"><span>Plan reference</span><strong>J-3</strong></div>
-  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
-  <button onclick="selectPlan('J-3',500000,30)">Select J-3</button>
- </section>
+  <div class="series-heading">
+   <h2>K SERIES</h2>
+   <span>6 Machines · 20-day cycles</span>
+  </div>
 
- <section class="plan">
-  <div class="machine"><span>🏢</span></div>
-  <h3>J-4 MACHINE</h3>
-  <div class="price">UGX 1,250,000</div>
-  <div class="details"><span>Lock duration</span><strong>25 Days</strong></div>
-  <div class="details"><span>Plan reference</span><strong>J-4</strong></div>
-  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
-  <button onclick="selectPlan('J-4',1250000,25)">Select J-4</button>
- </section>
+  <section class="plan">
+   <div class="machine machine-6">
+    <span class="machine-label">K-1</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-1 MACHINE</h3>
+   <div class="price">UGX 10,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-1</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 34,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-1',10000,20)">Select K-1</button>
+  </section>
 
- <section class="plan">
-  <div class="machine"><span>🏭</span></div>
-  <h3>J-5 MACHINE</h3>
-  <div class="price">UGX 2,500,000</div>
-  <div class="details"><span>Lock duration</span><strong>25 Days</strong></div>
-  <div class="details"><span>Plan reference</span><strong>J-5</strong></div>
-  <div class="note">Income and payout terms are subject to verified operating revenue and available funds.</div>
-  <button onclick="selectPlan('J-5',2500000,25)">Select J-5</button>
+  <section class="plan">
+   <div class="machine machine-7">
+    <span class="machine-label">K-2</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-2 MACHINE</h3>
+   <div class="price">UGX 20,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-2</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 52,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-2',20000,20)">Select K-2</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-8">
+    <span class="machine-label">K-3</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-3 MACHINE</h3>
+   <div class="price">UGX 35,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-3</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 71,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-3',35000,20)">Select K-3</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-9">
+    <span class="machine-label">K-4</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-4 MACHINE</h3>
+   <div class="price">UGX 50,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-4</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 112,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-4',50000,20)">Select K-4</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-10">
+    <span class="machine-label">K-5</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-5 MACHINE</h3>
+   <div class="price">UGX 70,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-5</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 143,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-5',70000,20)">Select K-5</button>
+  </section>
+
+  <section class="plan">
+   <div class="machine machine-11">
+    <span class="machine-label">K-6</span>
+    <div class="machine-body">
+     <div class="machine-screen"></div>
+     <div class="machine-panel"></div>
+     <div class="machine-light"></div>
+    </div>
+   </div>
+   <h3>K-6 MACHINE</h3>
+   <div class="price">UGX 100,000</div>
+   <div class="details"><span>Cycle duration</span><strong>20 Days</strong></div>
+   <div class="details"><span>Plan reference</span><strong>K-6</strong></div>
+   <div class="cycle-figure">
+    <small>Business-stated illustrative cycle figure</small>
+    <strong>UGX 187,000</strong>
+   </div>
+   <div class="note">Illustrative figure supplied by the business, not a promised or guaranteed payout. Actual payments depend on independently verified business revenue and available funds.</div>
+   <button onclick="selectPlan('K-6',100000,20)">Select K-6</button>
+  </section>
+
  </section>
+ </div>
 
  <a class="back" href="dashboard.html">← Back to Dashboard</a>
+
 </main>
 
 <script>
+const slider=document.getElementById("seriesSlider");
+const jTab=document.getElementById("jTab");
+const kTab=document.getElementById("kTab");
+
+function goSeries(index){
+ slider.scrollTo({
+  left:index*slider.clientWidth,
+  behavior:"smooth"
+ });
+ updateTabs(index);
+}
+
+function updateTabs(index){
+ jTab.classList.toggle("active",index===0);
+ kTab.classList.toggle("active",index===1);
+}
+
+slider.addEventListener("scroll",()=>{
+ const index=Math.round(slider.scrollLeft/slider.clientWidth);
+ updateTabs(index);
+});
+
 function selectPlan(name,amount,days){
- sessionStorage.setItem("hut8_selected_plan",JSON.stringify({
+ const selected={
   plan_name:name,
   amount:amount,
-  duration_days:days
- }));
- alert(name+" selected. Your selection has been saved for this session.");
+  duration_days:days,
+  selected_at:new Date().toISOString()
+ };
+
+ sessionStorage.setItem(
+  "hut8_selected_plan",
+  JSON.stringify(selected)
+ );
+
+ alert(
+  name+" selected.\n"+
+  "Investment: UGX "+amount.toLocaleString("en-UG")+
+  "\nCycle: "+days+" days"+
+  "\nYour selection has been saved for this session."
+ );
+
 }
 </script>
 
 </body>
-  </html>
-  
+ </html>
+ 
+
+
+ 
