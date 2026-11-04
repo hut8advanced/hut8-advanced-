@@ -1693,3 +1693,14 @@ document.querySelectorAll("button").forEach(function(button){
 })();
     </script>
 
+<script>
+document.querySelectorAll("button, a").forEach(function(element) {
+  const label = (element.innerText || element.textContent || "")
+    .trim().toLowerCase();
+
+  if (label === "activity" || label === "transactions") {
+    element.style.display = "none";
+  }
+});
+</script>
+
