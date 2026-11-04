@@ -523,6 +523,30 @@ async function logout(){
 
 startDashboard();
 </script>
+
+<script>
+document.querySelectorAll(".nav").forEach(nav=>{
+  if(!nav.querySelector(".active-plans-link")){
+    const button=document.createElement("button");
+    button.className="active-plans-link";
+    button.textContent="▣ Active Plans";
+    button.onclick=()=>window.location.href="active-plans.html";
+    nav.appendChild(button);
+  }
+});
+
+const mobileNav=document.querySelector(".mobile-nav");
+
+if(mobileNav && !mobileNav.querySelector(".active-plans-link")){
+  const button=document.createElement("button");
+  button.className="active-plans-link";
+  button.innerHTML="▣<br>Active Plans";
+  button.onclick=()=>window.location.href="active-plans.html";
+  mobileNav.appendChild(button);
+}
+</script>
+</body>
+ </html>
 </body>
  </html>
        
