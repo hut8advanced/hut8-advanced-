@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HUT8 ADVANCED - Deposit</title>
+<title>HUT8 ADVANCED | Deposit</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -12,180 +13,129 @@ body{
  margin:0;
  font-family:Arial,sans-serif;
  background:#f3faff;
- color:#16445d;
+ color:#12345a;
 }
 header{
- background:#55c9f0;
+ background:#279fd5;
  color:white;
- padding:20px;
+ padding:22px;
  text-align:center;
+ font-size:21px;
+ font-weight:bold;
 }
-header h2{margin:0}
 .container{
- max-width:600px;
- margin:25px auto;
- padding:15px;
+ max-width:480px;
+ margin:30px auto;
+ padding:20px;
 }
 .card{
  background:white;
- border-radius:18px;
+ padding:25px;
+ border-radius:16px;
+ box-shadow:0 5px 22px rgba(0,0,0,.07);
+}
+h2{text-align:center;margin-top:0}
+.payment-code{
+ background:#e7f5ff;
+ border:2px solid #279fd5;
+ border-radius:12px;
  padding:22px;
- margin-bottom:18px;
- box-shadow:0 5px 20px rgba(55,160,210,.10);
-}
-h3{margin-top:0;color:#258fbd}
-label{
- display:block;
- margin:15px 0 7px;
+ text-align:center;
+ font-size:30px;
  font-weight:bold;
+ letter-spacing:2px;
+ margin:20px 0;
+ color:#12345a;
 }
-input,select{
+input{
  width:100%;
  padding:14px;
- border:1px solid #c6e8f7;
- border-radius:10px;
+ margin:9px 0;
+ border:1px solid #cbdce8;
+ border-radius:9px;
  font-size:15px;
- background:white;
- color:#16445d;
 }
 button{
  width:100%;
+ padding:15px;
  border:0;
- padding:15px;
- border-radius:12px;
- background:#55c9f0;
+ border-radius:9px;
+ background:#279fd5;
  color:white;
- font-weight:bold;
  font-size:16px;
- margin-top:18px;
- cursor:pointer;
-}
-button:disabled{
- opacity:.5;
- cursor:not-allowed;
-}
-.back{
- display:inline-block;
- color:#258fbd;
- text-decoration:none;
  font-weight:bold;
- margin-bottom:15px;
-}
-.payment-box{
- background:#f0faff;
- border:1px solid #b9e6f8;
- border-radius:12px;
- padding:15px;
  margin-top:15px;
 }
-.payment-box p{margin:7px 0}
-.notice{
- background:#f0faff;
- padding:12px;
- border-radius:10px;
- font-size:13px;
- line-height:1.5;
+button:disabled{opacity:.6}
+.message{
+ text-align:center;
+ margin-top:15px;
+ font-size:14px;
 }
-.item{
- border-bottom:1px solid #e3f2fa;
- padding:14px 0;
+.back{
+ display:block;
+ text-align:center;
+ margin-top:20px;
+ color:#1686bd;
+ text-decoration:none;
 }
-.item:last-child{border:0}
-.status{
- display:inline-block;
- padding:6px 12px;
- border-radius:20px;
- background:#e5f6ff;
- color:#258fbd;
- font-size:12px;
- font-weight:bold;
-}
-.small{font-size:13px;color:#64869a}
-#message{margin-top:12px;font-size:14px}
 </style>
 </head>
 
 <body>
 
-<header>
-<h2>HUT8 ADVANCED</h2>
-<p>Deposit Funds</p>
-</header>
+<header>HUT8 ADVANCED</header>
 
 <div class="container">
-
-<a class="back" href="dashboard.html">← Back to Dashboard</a>
-
 <div class="card">
-<h3>Make a Deposit</h3>
-<p class="small">Minimum deposit: UGX 5,000</p>
+
+<h2>Make a Deposit</h2>
+
+<div class="payment-code">81132529</div>
 
 <form id="depositForm">
 
-<label>Deposit Amount (UGX)</label>
 <input
  type="number"
  id="amount"
+ placeholder="Deposit amount (Minimum UGX 5,000)"
  min="5000"
  step="1"
- placeholder="Enter amount"
  required
 >
 
-<label>Select Payment Method</label>
-<select id="paymentMethod" required>
-<option value="">Choose payment method</option>
-<option value="MTN Mobile Money">MTN Mobile Money</option>
-<option value="Airtel Money">Airtel Money</option>
-</select>
-
-<div class="payment-box" id="paymentDetails">
-<p>Select MTN or Airtel to view payment instructions.</p>
-</div>
-
-<label>Your Mobile Money Name</label>
 <input
  type="text"
- id="payerName"
- placeholder="Name registered on your account"
+ id="senderName"
+ placeholder="Your mobile money name"
  required
 >
 
-<label>Your Mobile Money Number</label>
 <input
  type="tel"
- id="payerNumber"
- placeholder="Your payment number"
+ id="senderNumber"
+ placeholder="Your mobile money number"
  required
 >
 
-<label>Transaction Reference</label>
 <input
  type="text"
  id="reference"
- placeholder="Enter payment transaction ID"
+ placeholder="Transaction reference"
  required
 >
 
-<div class="notice">
-Your deposit will be marked as pending until an administrator verifies your payment. Your balance will only be updated after approval.
-</div>
-
-<button type="submit" id="submitBtn" disabled>
-Payment Details Coming Soon
+<button type="submit" id="submitBtn">
+Submit Deposit
 </button>
 
-<div id="message"></div>
 </form>
-</div>
 
-<div class="card">
-<h3>My Deposit History</h3>
-<div id="depositHistory">
-Loading deposits...
-</div>
-</div>
+<div class="message" id="message"></div>
 
+<a class="back" href="dashboard.html">Back to Dashboard</a>
+
+</div>
 </div>
 
 <script>
@@ -193,188 +143,85 @@ const SUPABASE_URL =
 "https://chjtxxwxhvjwpspmikme.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_g8m0qRrMveb8A7H3BLYYg_g21-SBKA";
+"sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
 
-const supabaseClient = window.supabase.createClient(
+const db = window.supabase.createClient(
  SUPABASE_URL,
  SUPABASE_KEY
 );
 
-// ADD YOUR REAL PAYMENT DETAILS HERE LATER.
-const PAYMENT_DETAILS = {
- "MTN Mobile Money": {
-   name: "",
-   number: ""
- },
- "Airtel Money": {
-   name: "",
-   number: ""
- }
-};
-
-let currentUser = null;
-
-const method = document.getElementById("paymentMethod");
-const details = document.getElementById("paymentDetails");
-const submitBtn = document.getElementById("submitBtn");
+const form = document.getElementById("depositForm");
 const message = document.getElementById("message");
+const submitBtn = document.getElementById("submitBtn");
 
-async function startPage(){
- const {data,error} = await supabaseClient.auth.getSession();
-
- if(error || !data.session){
-   window.location.href = "index.html";
-   return;
- }
-
- currentUser = data.session.user;
- updatePaymentDetails();
- loadDepositHistory();
-}
-
-function updatePaymentDetails(){
- const selected = method.value;
- const payment = PAYMENT_DETAILS[selected];
-
- if(!selected){
-   details.innerHTML =
-   "<p>Select MTN or Airtel to view payment instructions.</p>";
-   submitBtn.disabled = true;
-   submitBtn.textContent = "Payment Details Coming Soon";
-   return;
- }
-
- if(!payment || !payment.number || !payment.name){
-   details.innerHTML =
-   "<p><strong>" + selected + "</strong></p>" +
-   "<p>Payment number: Coming soon</p>" +
-   "<p>Registered name: Coming soon</p>" +
-   "<p>Your payment instructions will appear here once the payment details are added.</p>";
-
-   submitBtn.disabled = true;
-   submitBtn.textContent = "Payment Details Coming Soon";
-   return;
- }
-
- details.innerHTML =
- "<p><strong>Send money to:</strong></p>" +
- "<p>Provider: " + selected + "</p>" +
- "<p>Account name: " + payment.name + "</p>" +
- "<p>Payment number: " + payment.number + "</p>";
-
- submitBtn.disabled = false;
- submitBtn.textContent = "Submit Deposit";
-}
-
-method.addEventListener("change",updatePaymentDetails);
-
-document.getElementById("depositForm")
-.addEventListener("submit",async function(e){
-
+form.addEventListener("submit", async function(e){
  e.preventDefault();
 
- if(!currentUser) return;
+ message.textContent = "";
 
- const amount = Number(document.getElementById("amount").value);
- const paymentMethod = method.value;
- const payerName = document.getElementById("payerName").value.trim();
- const payerNumber = document.getElementById("payerNumber").value.trim();
- const reference = document.getElementById("reference").value.trim();
+ const amount = Number(
+  document.getElementById("amount").value
+ );
+
+ const senderName =
+  document.getElementById("senderName").value.trim();
+
+ const senderNumber =
+  document.getElementById("senderNumber").value.trim();
+
+ const reference =
+  document.getElementById("reference").value.trim();
 
  if(amount < 5000){
-   message.textContent = "Minimum deposit is UGX 5,000.";
-   return;
- }
-
- if(!PAYMENT_DETAILS[paymentMethod] ||
-    !PAYMENT_DETAILS[paymentMethod].number){
-   message.textContent = "Payment details are not available yet.";
-   return;
+  message.textContent =
+   "Minimum deposit is UGX 5,000.";
+  return;
  }
 
  submitBtn.disabled = true;
  submitBtn.textContent = "Submitting...";
 
- const {error} = await supabaseClient
- .from("hut8_deposits")
- .insert({
-   user_id: currentUser.id,
-   amount: amount,
-   payment_method: paymentMethod,
-   mobile_money_name: payerName,
-   mobile_money_number: payerNumber,
-   transaction_reference: reference,
-   status: "pending"
- });
+ try{
+  const {data:{session},error:sessionError} =
+   await db.auth.getSession();
 
- if(error){
-   message.textContent = "Deposit submission failed: " + error.message;
-   submitBtn.disabled = false;
-   submitBtn.textContent = "Submit Deposit";
+  if(sessionError) throw sessionError;
+
+  if(!session){
+   message.textContent =
+    "Please log in before submitting a deposit.";
    return;
+  }
+
+  const {error} = await db
+   .from("hut8_deposits")
+   .insert([{
+    user_id: session.user.id,
+    amount: amount,
+    payment_method: "MTN",
+    mobile_money_name: senderName,
+    mobile_money_number: senderNumber,
+    transaction_reference: reference,
+    status: "pending"
+   }]);
+
+  if(error) throw error;
+
+  message.textContent =
+   "Deposit submitted successfully. Awaiting admin approval.";
+
+  form.reset();
+
+ }catch(error){
+  message.textContent =
+   "Could not submit deposit: " + error.message;
+ }finally{
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit Deposit";
  }
-
- message.textContent =
- "Your deposit request has been submitted successfully and is pending approval.";
-
- document.getElementById("depositForm").reset();
- updatePaymentDetails();
- loadDepositHistory();
 });
-
-async function loadDepositHistory(){
-
- const history = document.getElementById("depositHistory");
-
- const {data,error} = await supabaseClient
- .from("hut8_deposits")
- .select("amount,payment_method,transaction_reference,status,created_at")
- .eq("user_id",currentUser.id)
- .order("created_at",{ascending:false});
-
- if(error){
-   history.textContent = "Could not load deposit history.";
-   return;
- }
-
- if(!data || data.length === 0){
-   history.textContent = "You have not made any deposits yet.";
-   return;
- }
-
- history.replaceChildren();
-
- data.forEach(item => {
-   const box = document.createElement("div");
-   box.className = "item";
-
-   const amount = document.createElement("strong");
-   amount.textContent =
-     "UGX " + Number(item.amount).toLocaleString();
-
-   const methodText = document.createElement("p");
-   methodText.textContent = item.payment_method;
-
-   const referenceText = document.createElement("p");
-   referenceText.className = "small";
-   referenceText.textContent =
-     "Reference: " + item.transaction_reference;
-
-   const status = document.createElement("span");
-   status.className = "status";
-   status.textContent = item.status.toUpperCase();
-
-   const date = document.createElement("p");
-   date.className = "small";
-   date.textContent = new Date(item.created_at).toLocaleString();
-
-   box.append(amount,methodText,referenceText,status,date);
-   history.appendChild(box);
- });
-}
-
-startPage();
 </script>
 
 </body>
-  </html>
+ </html>
+
