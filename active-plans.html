@@ -5,176 +5,384 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HUT8 ADVANCED - Active Plans</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:20px;background:#F3FAFF;color:#12345A;font-family:Arial,sans-serif}
-header{max-width:850px;margin:15px auto 25px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+
+body{
+ margin:0;
+ padding:20px;
+ background:#F3FAFF;
+ color:#12345A;
+ font-family:Arial,sans-serif;
+}
+
+header{
+ max-width:850px;
+ margin:15px auto 25px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:12px;
+}
+
 h1{font-size:24px;margin:0}
-.sub{color:#66819a;font-size:14px;margin-top:7px}
+
+.sub{
+ color:#66819a;
+ font-size:14px;
+ margin-top:7px;
+}
+
 .container{max-width:850px;margin:auto}
-.plan{background:white;border:1px solid #dceef8;border-radius:14px;padding:20px;margin-bottom:15px;box-shadow:0 4px 15px rgba(24,91,130,.04)}
-.plan-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+
+.plan{
+ background:white;
+ border:1px solid #dceef8;
+ border-radius:14px;
+ padding:20px;
+ margin-bottom:15px;
+ box-shadow:0 4px 15px rgba(24,91,130,.04);
+}
+
+.plan-top{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ align-items:center;
+}
+
 .plan h3{margin:0 0 8px}
-.status{background:#e7f5fc;color:#17658e;padding:7px 11px;border-radius:20px;font-size:12px;font-weight:bold}
-.details{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}
-.detail small{color:#66819a;display:block;margin-bottom:6px}
-.detail strong{font-size:16px;overflow-wrap:anywhere}
-.countdown{background:#edf8ff;padding:15px;border-radius:10px;margin-top:12px}
+
+.status{
+ background:#e7f5fc;
+ color:#17658e;
+ padding:7px 11px;
+ border-radius:20px;
+ font-size:12px;
+ font-weight:bold;
+}
+
+.details{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:15px;
+ margin:20px 0;
+}
+
+.detail small{
+ color:#66819a;
+ display:block;
+ margin-bottom:6px;
+}
+
+.detail strong{
+ font-size:16px;
+ overflow-wrap:anywhere;
+}
+
+.countdown{
+ background:#edf8ff;
+ padding:15px;
+ border-radius:10px;
+ margin-top:12px;
+}
+
 .countdown strong{font-size:19px}
-button{background:#279FD5;color:white;border:0;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.back{color:#17658e;text-decoration:none;font-size:14px}
-.message{text-align:center;padding:25px;background:white;border-radius:12px;color:#66819a}
-.note{font-size:12px;color:#66819a;line-height:1.5;margin-top:12px}
-@media(max-width:500px){body{padding:14px}.details{grid-template-columns:1fr 1fr}h1{font-size:21px}}
+
+.back{
+ color:#17658e;
+ text-decoration:none;
+ font-size:14px;
+}
+
+.message{
+ text-align:center;
+ padding:25px;
+ background:white;
+ border-radius:12px;
+ color:#66819a;
+}
+
+.note{
+ font-size:12px;
+ color:#66819a;
+ line-height:1.5;
+ margin-top:12px;
+}
+
+.series{
+ color:#279FD5;
+ font-size:12px;
+ font-weight:bold;
+ margin-top:5px;
+}
+
+@media(max-width:500px){
+ body{padding:14px}
+ .details{grid-template-columns:1fr 1fr}
+ h1{font-size:21px}
+}
 </style>
 </head>
+
 <body>
 
 <header>
-  <div>
-    <h1>Active Plans</h1>
-    <p class="sub">Track your activated plans and maturity dates.</p>
-  </div>
-  <a class="back" href="dashboard.html">← Dashboard</a>
+ <div>
+  <h1>Active Plans</h1>
+  <p class="sub">Track your activated plans and maturity dates.</p>
+ </div>
+
+ <a class="back" href="dashboard.html">← Dashboard</a>
 </header>
 
 <main class="container" id="plans">
-  <div class="message">Loading your plans...</div>
+ <div class="message">Loading your plans...</div>
 </main>
 
 <script>
-const SUPABASE_URL="https://chjtxxwxhvjwpspmikme.supabase.co";
-const SUPABASE_KEY="sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SUPABASE_URL =
+"https://chjtxxwxhvjwpspmikme.supabase.co";
 
-let currentUser=null;
-let countdownTimer=null;
+const SUPABASE_KEY =
+"sb_publishable_g8gM0qRrMveb8A7H3BLYYg_g21-SBKA";
+
+const db = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+let countdownTimer = null;
 
 function esc(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ })[c]);
 }
 
 function money(value){
-  return Number(value||0).toLocaleString("en-US");
+ return Number(value || 0).toLocaleString("en-US");
+}
+
+function formatDate(value){
+ if(!value) return "Not recorded";
+
+ const date = new Date(value);
+
+ if(isNaN(date.getTime())) return "Not recorded";
+
+ return date.toLocaleString("en-GB",{
+  day:"2-digit",
+  month:"short",
+  year:"numeric",
+  hour:"2-digit",
+  minute:"2-digit"
+ });
 }
 
 function timeLeft(date){
-  const difference=new Date(date).getTime()-Date.now();
+ if(!date) return null;
 
-  if(difference<=0) return null;
+ const difference =
+ new Date(date).getTime() - Date.now();
 
-  const days=Math.floor(difference/86400000);
-  const hours=Math.floor((difference%86400000)/3600000);
-  const minutes=Math.floor((difference%3600000)/60000);
-  const seconds=Math.floor((difference%60000)/1000);
+ if(!Number.isFinite(difference) || difference <= 0){
+  return null;
+ }
 
-  return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+ const days = Math.floor(difference / 86400000);
+ const hours = Math.floor((difference % 86400000) / 3600000);
+ const minutes = Math.floor((difference % 3600000) / 60000);
+ const seconds = Math.floor((difference % 60000) / 1000);
+
+ return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
 }
 
 async function loadPlans(){
-  const {data:sessionData,error:sessionError}=await db.auth.getSession();
 
-  if(sessionError || !sessionData.session){
-    window.location.href="index.html";
-    return;
+ const container = document.getElementById("plans");
+
+ try{
+
+  // Check logged-in user
+  const {data:sessionData,error:sessionError} =
+   await db.auth.getSession();
+
+  if(sessionError) throw sessionError;
+
+  if(!sessionData.session){
+   window.location.href = "index.html";
+   return;
   }
 
-  currentUser=sessionData.session.user;
+  const currentUser = sessionData.session.user;
 
-  const {data,error}=await db
-    .from("hut8_k_series_enrollments")
-    .select("*")
-    .eq("user_id",currentUser.id)
-    .order("activated_at",{ascending:false});
+  // Read J-series and K-series applications
+  const {data,error} = await db
+   .from("hut8_plan_enrollments")
+   .select(`
+    id,
+    user_id,
+    plan_code,
+    plan_name,
+    series,
+    amount,
+    duration_days,
+    status,
+    approved,
+    requested_at,
+    activated_at,
+    matures_at
+   `)
+   .eq("user_id",currentUser.id)
+   .eq("status","active")
+   .eq("approved",true)
+   .order("activated_at",{ascending:false});
 
-  const container=document.getElementById("plans");
+  if(error) throw error;
 
-  if(error){
-    container.innerHTML=`<div class="message">Could not load your plans: ${esc(error.message)}</div>`;
-    return;
+  if(!data || data.length === 0){
+
+   container.innerHTML = `
+    <div class="message">
+     <h3>No active plans yet</h3>
+     <p>Your approved J-series and K-series plans will appear here.</p>
+     <br>
+     <a class="back" href="plans.html">Explore Plans</a>
+    </div>
+   `;
+
+   return;
   }
 
-  if(!data || data.length===0){
-    container.innerHTML=`
-      <div class="message">
-        <h3>No active plans yet</h3>
-        <p>Your selected plans will appear here after successful activation.</p>
-        <br>
-        <a class="back" href="plans.html">Explore Plans</a>
-      </div>`;
-    return;
-  }
+  // Display all active plans
+  container.innerHTML = data.map(plan=>{
 
-  container.innerHTML=data.map(plan=>{
-    const matured=new Date(plan.matures_at).getTime()<=Date.now();
+   const matured =
+    plan.matures_at &&
+    new Date(plan.matures_at).getTime() <= Date.now();
 
-    return `
-      <article class="plan">
-        <div class="plan-top">
-          <div>
-            <h3>${esc(plan.plan_name)}</h3>
-            <p class="sub">${esc(plan.plan_code)}</p>
-          </div>
-          <span class="status">${matured?"Matured":esc(plan.status)}</span>
-        </div>
+   return `
+    <article class="plan">
 
-        <div class="details">
-          <div class="detail">
-            <small>Amount paid</small>
-            <strong>${money(plan.amount_paid)}</strong>
-          </div>
-          <div class="detail">
-            <small>Duration</small>
-            <strong>${esc(plan.duration_days)} days</strong>
-          </div>
-          <div class="detail">
-            <small>Activation date</small>
-            <strong>${new Date(plan.activated_at).toLocaleDateString()}</strong>
-          </div>
-          <div class="detail">
-            <small>Maturity date</small>
-            <strong>${new Date(plan.matures_at).toLocaleDateString()}</strong>
-          </div>
-        </div>
+     <div class="plan-top">
+      <div>
+       <h3>${esc(plan.plan_name || plan.plan_code)}</h3>
+       <p class="sub">${esc(plan.plan_code)}</p>
+       <div class="series">
+        ${esc(plan.series || "HUT8 PLAN")}
+       </div>
+      </div>
 
-        <div class="countdown">
-          <small>${matured?"Plan maturity reached":"Time remaining"}</small>
-          <br><strong id="timer-${esc(plan.id)}">Calculating...</strong>
-        </div>
+      <span class="status">
+       ${matured ? "Maturity reached" : "ACTIVE"}
+      </span>
+     </div>
 
-        <button style="margin-top:15px" disabled>
-          ${matured?"Receive — awaiting payout verification":"Receive"}
-        </button>
-        <p class="note">Receiving will be enabled after the matured payout has been verified as funded. This page does not credit funds by itself.</p>
-      </article>`;
+     <div class="details">
+
+      <div class="detail">
+       <small>Principal reserved</small>
+       <strong>UGX ${money(plan.amount)}</strong>
+      </div>
+
+      <div class="detail">
+       <small>Duration</small>
+       <strong>${esc(plan.duration_days)} days</strong>
+      </div>
+
+      <div class="detail">
+       <small>Activation date</small>
+       <strong>${formatDate(plan.activated_at)}</strong>
+      </div>
+
+      <div class="detail">
+       <small>Maturity date</small>
+       <strong>${formatDate(plan.matures_at)}</strong>
+      </div>
+
+     </div>
+
+     <div class="countdown">
+      <small>
+       ${matured ? "Plan maturity reached" : "Time remaining"}
+      </small>
+      <br>
+      <strong id="timer-${esc(plan.id)}">
+       Calculating...
+      </strong>
+     </div>
+
+     <p class="note">
+      Your principal reservation is recorded.
+      Any maturity payment requires separate verification
+      and confirmation of available funds.
+     </p>
+
+    </article>
+   `;
+
   }).join("");
 
   startCountdowns(data);
+
+ }catch(error){
+
+  console.error("Active plans error:",error);
+
+  container.innerHTML = `
+   <div class="message">
+    <h3>Unable to load your plans</h3>
+    <p>${esc(error.message)}</p>
+    <button onclick="loadPlans()">Try Again</button>
+   </div>
+  `;
+
+ }
+
 }
 
 function startCountdowns(plans){
-  if(countdownTimer) clearInterval(countdownTimer);
 
-  function update(){
-    plans.forEach(plan=>{
-      const element=document.getElementById("timer-"+plan.id);
-      if(!element) return;
+ if(countdownTimer){
+  clearInterval(countdownTimer);
+ }
 
-      const remaining=timeLeft(plan.matures_at);
-      element.textContent=remaining || "Matured";
-    });
-  }
+ function update(){
 
-  update();
-  countdownTimer=setInterval(update,1000);
+  plans.forEach(plan=>{
+
+   const element =
+    document.getElementById("timer-" + plan.id);
+
+   if(!element) return;
+
+   const remaining = timeLeft(plan.matures_at);
+
+   element.textContent =
+    remaining || "Matured";
+
+  });
+
+ }
+
+ update();
+
+ countdownTimer = setInterval(update,1000);
+
 }
 
 loadPlans();
+
 </script>
+
 </body>
-    </html>
+   </html>
   
